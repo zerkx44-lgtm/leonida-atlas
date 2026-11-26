@@ -183,3 +183,8 @@ body.agregando #map, body.agregando .leaflet-interactive { cursor: crosshair; }
   .ficha::before, .panel::before { content: ''; display: block; width: 40px; height: 4px; border-radius: 2px; background: var(--borde); margin: -4px auto 8px; }
   .leyenda-precision { bottom: 18px; }
 }
+
+.codigo-caja { display: flex; align-items: center; gap: 10px; margin: 10px 0; padding: 10px 12px; border-radius: 12px; background: linear-gradient(90deg, #3a300c, #24301a); border: 1px solid #b8962b; }
+.codigo-caja span { font-size: 13px; color: #ffe8a3; }
+.codigo-caja b { font: 800 26px/1 ui-monospace, 'SF Mono', Menlo, monospace; letter-spacing: .12em; color: #fff; flex: 1; }
+.codigo-caja .btn { padding: 5px 12px; font-size: 13px; }

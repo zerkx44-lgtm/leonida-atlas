@@ -3,7 +3,7 @@
 Es una página web que también se instala como app en el celular (PWA, en Android y en iPhone). Incluye:
 
 - **Mapa ilustrado de Leonida** trazado sobre el mapa oficial "Visit Leonida": costa, islas, lagos, ríos, zonas urbanas, los 5 condados, carreteras (I-404, I-297, I-97, US-35, US-183, 1A…) y rótulos en sus posiciones oficiales. El dibujo es propio (`tools/generar_mapa.py`); la imagen oficial no se publica.
-- **175 puntos** tomados de guías públicas de la comunidad: autos raros y ocultos, escondites, **coleccionables** (cartas, meteoritos, flamencos, escaneos WAiNK, aros, saltos, revistas, armas únicas), **28 eventos aleatorios**, tiendas, ropa, restaurantes, bares, bancos, hoteles, talleres, gasolineras, transporte, policía, ocio y lugares emblemáticos.
+- **227 puntos** tomados de guías públicas de la comunidad, incluidas **50 cajas fuertes, teclados y contraseñas con su código** (pista, botín y requisitos; cruzados entre 6 guías): autos raros y ocultos, escondites, **coleccionables** (cartas, meteoritos, flamencos, escaneos WAiNK, aros, saltos, revistas, armas únicas), **28 eventos aleatorios**, tiendas, ropa, restaurantes, bares, bancos, hoteles, talleres, gasolineras, transporte, policía, ocio y lugares emblemáticos.
 - **Filtros** por categoría (agrupadas como en el juego), por región y por confiabilidad del dato (✅ confirmado por 2+ fuentes, 📘 1 fuente, ❓ rumor, 👥 comunidad), además de un buscador.
 - **Fichas con truco paso a paso**: hora, requisitos (misión, Snap Gun, Key Cloner…) y **video** de YouTube o TikTok que se reproduce ahí mismo. Los links de X, Instagram, Facebook, Twitch y Kick se muestran como botón.
 - **Progreso personal**: marcar "encontrado" y guardar favoritos en el celular.

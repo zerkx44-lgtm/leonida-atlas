@@ -56,7 +56,7 @@
     if (estado.soloFavs && !personal.favoritos.includes(p.id)) return false;
     if (estado.ocultarEncontrados && personal.encontrados.includes(p.id)) return false;
     if (estado.q) {
-      const txt = Moderacion.normalizar(`${p.nombre} ${p.zona || ''} ${p.region} ${p.desc || ''} ${(p.etiquetas || []).join(' ')} ${CATEGORIAS[p.cat]?.nombre || ''}`);
+      const txt = Moderacion.normalizar(`${p.nombre} ${p.zona || ''} ${p.region} ${p.desc || ''} ${p.codigo || ''} ${p.pista || ''} ${p.botin || ''} ${(p.etiquetas || []).join(' ')} ${CATEGORIAS[p.cat]?.nombre || ''}`);
       if (!Moderacion.normalizar(estado.q).split(/\s+/).every(w => txt.includes(w))) return false;
     }
     return true;
@@ -101,7 +101,7 @@
       return `<li><button data-poi="${esc(p.id)}" class="${estado.seleccionado === p.id ? 'sel' : ''}">
         <span class="ico" style="--c:${c.color}">${c.icono}</span>
         <span class="txt"><b>${esc(p.nombre)}</b><small>${esc(p.zona || p.region)}</small></span>
-        <span class="marcas">${p.videos?.length ? '🎬' : ''}${fav ? '★' : ''}${hecho ? '✓' : ''}${ESTADOS[p.estado].icono}</span>
+        <span class="marcas">${p.codigo ? '🔐' : ''}${p.videos?.length ? '🎬' : ''}${fav ? '★' : ''}${hecho ? '✓' : ''}${ESTADOS[p.estado].icono}</span>
       </button></li>`;
     }).join('') || '<li class="vacio">Nada con esos filtros. Prueba con “Todas” las categorías.</li>';
   }
@@ -126,7 +126,10 @@
       <p class="zona">📍 ${esc(p.zona || '')}${p.zona ? ' · ' : ''}${esc(p.region)}</p>
       <p class="estado e-${p.estado}">${ESTADOS[p.estado].icono} ${ESTADOS[p.estado].txt}</p>
       ${(p.etiquetas || []).map(t => `<span class="etiqueta">${esc(t)}</span>`).join('')}
+      ${p.codigo ? `<div class="codigo-caja"><span>🔐 Código</span><b>${esc(p.codigo)}</b>${/^[\w#]+$/.test(p.codigo) && !/^(Aleatorio|Varía)$/.test(p.codigo) ? `<button class="btn ghost" data-accion="copiar-codigo">Copiar</button>` : ''}</div>` : ''}
       ${p.desc ? `<p class="desc">${esc(p.desc)}</p>` : ''}
+      ${p.pista ? `<p class="dato">🔎 <b>Pista:</b> ${esc(p.pista)}</p>` : ''}
+      ${p.botin ? `<p class="dato">💰 <b>Botín:</b> ${esc(p.botin)}</p>` : ''}
       ${enWiki(p.id)}
       ${p.hora ? `<p class="dato">🕒 <b>Hora:</b> ${esc(p.hora)}</p>` : ''}
       ${p.requisitos ? `<p class="dato">🔑 <b>Requisitos:</b> ${esc(p.requisitos)}</p>` : ''}
@@ -185,6 +188,7 @@
       else { await navigator.clipboard?.writeText(url); toast('Link copiado'); }
     }
     if (b.dataset.accion === 'corregir') iniciarAgregar({ tipo: 'correccion', poi: p });
+    if (b.dataset.accion === 'copiar-codigo') { await navigator.clipboard?.writeText(p.codigo); toast(`Código ${p.codigo} copiado`); }
   });
 
   /* ---------- Agregar aporte ---------- */

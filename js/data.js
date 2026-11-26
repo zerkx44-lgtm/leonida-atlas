@@ -16,6 +16,12 @@ const FUENTES = {
   BDO: { nombre: 'TheBaseDotaku — Encuentros', url: 'https://thebasedotaku.com/guides/gta-6-random-world-events-and-encounters/' },
   V6: { nombre: 'Vice6Map', url: 'https://vice6map.com/' },
   G6M: { nombre: 'GTA6Maps (ubicaciones)', url: 'https://gta6maps.io/gta-6' },
+  GG: { nombre: 'games.gg — Códigos de cajas', url: 'https://games.gg/grand-theft-auto-vi/guides/grand-theft-auto-6-safe-codes-list/' },
+  TBS: { nombre: 'TheBestMods — Códigos', url: 'https://thebestmods.com/gta-6/safe-codes/' },
+  G6: { nombre: 'GTA6Pocket — Códigos', url: 'https://gta6pocket.com/en/safe-codes/' },
+  S4: { nombre: 'Space4Games — Códigos', url: 'https://space4games.com/en/games-en/gta-6-safe-codes-combinations-locations/' },
+  H: { nombre: 'GTA6Heists — 43 códigos', url: 'https://www.gta6heists.com/robberies/safe-codes' },
+  I: { nombre: 'GTA6Info Wiki — Safe Codes', url: 'https://gta6info.com/wiki/Safe_Codes' },
 };
 
 const REGIONES = ['Vice City', 'Leonida Keys', 'Grassrivers', 'Port Gellhorn', 'Ambrosia', 'Mount Kalaga'];
@@ -81,6 +87,7 @@ const GRUPOS = [
 
 const CATEGORIAS = {
   escondite:     { nombre: 'Escondites (safehouses)', icono: '🏠', color: '#22c55e', grupo: 'secretos' },
+  caja_fuerte:   { nombre: 'Cajas fuertes y códigos', icono: '🔐', color: '#fbbf24', grupo: 'secretos' },
   auto_raro:     { nombre: 'Autos raros y ocultos',   icono: '🏎️', color: '#f43f5e', grupo: 'secretos' },
   misterio:      { nombre: 'Easter eggs y misterios', icono: '👽', color: '#14b8a6', grupo: 'secretos' },
   carta:         { nombre: 'Cartas coleccionables',   icono: '🃏', color: '#a855f7', grupo: 'coleccion' },
@@ -386,6 +393,144 @@ const POIS = [
   { id: 'lago-leonida', nombre: 'Lago Leonida', cat: 'naturaleza', ancla: 'Lake Leonida', fuentes: ['G6M', 'BL'], estado: 'confirmado' },
 ];
 
+/* ═════════════════ CAJAS FUERTES Y CÓDIGOS ═════════════════
+ * Códigos fijos reportados por guías de la comunidad. `codigo` se muestra en grande en la ficha.
+ * Los bancos y tiendas usan códigos que cambian en cada partida: por eso no se listan como fijos.
+ * `px` = posición aproximada en el mapa oficial cuando se conoce mejor que la zona. */
+const CAJAS = [
+  // ── Port Gellhorn (Kolt & Associates) ──
+  { id: 'cf-brooks', nombre: 'Brooks Boatworks — caja fuerte', cat: 'caja_fuerte', codigo: '6823', ancla: 'Port Gellhorn', px: [445, 672], zona: 'Muelles del norte, junto al puente a Draper Island',
+    desc: 'Operación de la pandilla Kolt & Associates. La caja está en la bodega principal.',
+    pista: 'Mapa en la pared del edificio gris del lado este (sube por la escalera exterior). Ese mismo mapa trae los códigos de La Cascara (6969) y Kingpin Bowling (0300).',
+    requisitos: 'Capítulo 2', fuentes: ['GG', 'TBS', 'G6', 'S4', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-la-cascara', nombre: 'La Cascara Motel — caja fuerte', cat: 'caja_fuerte', codigo: '6969', ancla: 'Port Gellhorn', px: [420, 725], zona: 'Oeste, al sur del puente a Draper Island',
+    desc: 'Operación de Kolt. La caja está en el último piso, junto al cuarto de armas (ahí también hay un SMG Scrapper VF5C). Afuera está el Firebug Dominator.',
+    pista: 'Mapa de pared en Brooks Boatworks.', requisitos: 'Capítulo 2', fuentes: ['GG', 'TBS', 'G6', 'S4', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-kingpin', nombre: 'Kingpin Bowling — caja fuerte', cat: 'caja_fuerte', codigo: '0300', ancla: 'Port Gellhorn', px: [470, 790], zona: 'Sur de Port Gellhorn — oficina del noreste',
+    desc: 'Operación de Kolt. Caja verde en la oficina trasera. Escribe el cero inicial.', pista: 'No está en el boliche: viene en el mapa de pared de Brooks Boatworks.',
+    botin: 'Efectivo; según TheBestMods también la escopeta Gutterball Moreland 850 y un reloj Crowex Octane "Orca".', requisitos: 'Capítulo 2', fuentes: ['GG', 'TBS', 'G6', 'S4', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-delights', nombre: 'Delights Cabaret — caja de la oficina', cat: 'caja_fuerte', codigo: '2008', ancla: 'Port Gellhorn', zona: 'Oficina pasando la cocina',
+    desc: 'Caja del dueño del club (misión de robarle al jefe de Vicki).', pista: 'Vicki te manda el código por mensaje.', botin: 'Algo de efectivo y billetes marcados.',
+    requisitos: 'Capítulo 2, misión "Afternoon Delight"', fuentes: ['GG', 'TBS', 'G6', 'S4', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-avery-pawn', nombre: 'Avery Pawn — caja fuerte (código aleatorio)', cat: 'atraco', codigo: 'Aleatorio', ancla: 'Port Gellhorn', zona: 'Caja trasera',
+    desc: 'El código cambia en cada partida.', pista: 'Amenaza al empleado y elige "Safe Code?", busca la nota verde en el tablero del personal o vuélala con una bomba lapa.',
+    fuentes: ['G6', 'I'], estado: 'confirmado' },
+
+  // ── Key Lento ──
+  { id: 'cf-moonstone', nombre: 'Moonstone Boutique — puerta del laboratorio', cat: 'caja_fuerte', codigo: '0420', ancla: 'Key Lento', zona: 'Artist Village, cerca de la estatua de The Wonder Whale',
+    desc: 'Teclado de la puerta del cuarto trasero (laboratorio de ácido).', pista: 'El empleado te lo dice si lo confrontas; con Focus ves quién sabe el código.',
+    requisitos: 'Capítulo 1, misión "Lab Fees"', fuentes: ['GG', 'TBS', 'G6', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-brian-lockup', nombre: 'Bodega de Brian (Brian\'s Lockup)', cat: 'caja_fuerte', codigo: '7700', ancla: 'Key Lento', zona: 'Junto al club Isla Tropical',
+    desc: 'Teclado verde de la puerta; aquí guardas lo robado.', pista: 'Brian te lo da por teléfono.', requisitos: 'Capítulo 1, misión "Lab Fees"', fuentes: ['GG', 'G6', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-party-house', nombre: 'Garaje de la casa de fiesta', cat: 'caja_fuerte', codigo: '092319', ancla: 'Key Lento', zona: 'Sureste de Key Lento',
+    desc: 'Teclado del garaje (escribe primero el 0).', botin: 'Invetero Coquette Spiderweb.', fuentes: ['BL', 'G6', 'I'], estado: 'confirmado' },
+
+  // ── Mariana County / Grassrivers ──
+  { id: 'cf-pelican-pc', nombre: 'Laboratorio de cangrejos — contraseña de la PC', cat: 'caja_fuerte', codigo: 'CLEAVES', ancla: 'Pelican Valley', zona: 'Puesto de investigación en el pantano (Gullet Marsh)',
+    desc: 'Primer paso de una cadena de 3 códigos.', pista: 'Está grabada en las tablas del piso de la recámara. Antes enciende el interruptor del panel eléctrico de afuera.',
+    pasos: ['Enciende el panel eléctrico exterior.', 'Entra a la PC con CLEAVES.', 'La PC te lleva a la caja (0072).', 'La nota de la caja abre el muelle (0212).'], fuentes: ['GG', 'TBS', 'G6', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-pelican-caja', nombre: 'Laboratorio de cangrejos — caja fuerte', cat: 'caja_fuerte', codigo: '0072', ancla: 'Pelican Valley', zona: 'Dentro del puesto de investigación',
+    pista: 'Notas de "Specimen 0036 SUCCESS": duplica el número.', botin: 'Unos $1,000 y la nota con el código del muelle.', fuentes: ['GG', 'TBS', 'G6', 'S4', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-pelican-muelle', nombre: 'Laboratorio de cangrejos — cobertizo del muelle', cat: 'caja_fuerte', codigo: '0212', ancla: 'Pelican Valley', zona: 'Edificio al final del muelle',
+    pista: 'Nota "EMERGENCY GO PROTOCOL" dentro de la caja anterior.', botin: 'SMG Crabshack VF5 (algunas guías: también $10,000).', fuentes: ['GG', 'TBS', 'G6', 'S4', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-sunrise-rv', nombre: 'Sunrise RV Park — caja del muelle', cat: 'caja_fuerte', codigo: '6769', ancla: 'Cottonmouth Lake', px: [745, 1515], zona: 'Orilla norte de Cottonmouth Lake — edificio del muelle (sur)',
+    desc: 'Operación de los Kingfishers.', pista: 'Libreta en la caseta al este de la glorieta / oficina junto a la reja.', requisitos: 'Capítulo 2', fuentes: ['GG', 'TBS', 'G6', 'S4', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-cottonmouth-trailer', nombre: 'Tráiler de Cottonmouth Lake — caja fuerte', cat: 'caja_fuerte', codigo: '44017', ancla: 'Cottonmouth Lake', zona: 'Caja pequeña bajo el microondas',
+    pista: 'Los cinco dígitos están en las postales/fotos de la pared, junto a la cama.', botin: 'Algo de efectivo y la carta de Laki Maivia (se vende en ~$1,350).', fuentes: ['TBS', 'G6', 'S4', 'I', 'BL'], estado: 'confirmado' },
+  { id: 'cf-watson-safehouse', nombre: 'Watson Bay Safehouse — caja fuerte', cat: 'caja_fuerte', codigo: '1819', ancla: 'Watson Bay', zona: 'Arriba, pasando la cocina',
+    desc: 'Operación de La Polilla Negra.', pista: 'Correo en la computadora de la cocina, junto a la ventana.', botin: 'Unos $3,300 y una La Polilla Negra VF-G1 en estuche negro.', fuentes: ['G6', 'S4', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-palmer', nombre: 'Palmer Fishing Warehouse — caja fuerte', cat: 'caja_fuerte', codigo: '1886', ancla: 'Watson Bay', zona: 'Caja del piso de arriba',
+    desc: 'Operación de La Polilla Negra. Una guía dice 1887: si falla, prueba ese.', pista: 'Nota en la computadora de la planta baja.', botin: 'Unos $3,000.', fuentes: ['G6', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-nova-junkyard', nombre: 'Nova Auto Junkyard (M7) — caja fuerte', cat: 'caja_fuerte', codigo: '7777', ancla: 'Hamlet', zona: 'Oficina con cortina blanca, sureste del deshuesadero, junto al autobús escolar amarillo',
+    desc: 'Escondite de M7 (se revela en el evento del recluta golpeado).', pista: 'Escrito en la pared frente a la caja.', botin: 'Efectivo; en el garaje un convertible y al fondo el Gauntlet Hellfire de la Lista de Randy.',
+    fuentes: ['GG', 'TBS', 'G6', 'S4', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-iaa', nombre: 'Búnker secreto de la IAA (teclado)', cat: 'caja_fuerte', codigo: '085355', ancla: 'Big Pine', zona: 'Bosque cerca de Big Pine — teclado en un árbol junto a la escotilla',
+    desc: 'Segunda parte del misterio del búnker presidencial.', pista: 'La palabra "OBSESS" en números (O=0, B=8, S=5, E=3).', botin: 'Un tanque gratis y el rifle Cold War 556.', fuentes: ['G6'], estado: 'una_fuente' },
+  { id: 'cf-iaa-puzzle', nombre: 'Búnker de la IAA — acertijo del lavado de cerebro', cat: 'caja_fuerte', codigo: '090607', ancla: 'Big Pine', zona: 'Cuarto a la derecha de la recepción',
+    pista: 'La computadora de ese cuarto acepta "President Russo 0612".', fuentes: ['G6'], estado: 'una_fuente' },
+
+  // ── Vice City ──
+  { id: 'cf-janjak', nombre: "JanJak's Garage (San4San) — caja fuerte", cat: 'caja_fuerte', codigo: '4444', ancla: 'La Perle', zona: 'Suroeste de La Perle, al norte de Del Rio Blvd — cuarto junto a la oficina',
+    pista: 'Nota adhesiva en el refrigerador.', botin: 'Unos $2,200 y una KZ-59 única en la vitrina de la oficina.', requisitos: 'Desde el Capítulo 1', fuentes: ['TBS', 'G6', 'S4', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-drip-drops', nombre: 'Drip Drops — tenis ilegales (San4San)', cat: 'caja_fuerte', codigo: '4124', ancla: 'La Perle', zona: 'Del Rio Blvd — 2ª caja en el edificio cruzando el callejón, 3er piso, 3ª puerta',
+    pista: 'La primera caja (cuarto trasero, amenazando al empleado) trae una nota que apunta al edificio de enfrente.', botin: 'Unos $1,700 en la primera caja y $2,300 en la segunda.', requisitos: 'Capítulo 3', fuentes: ['TBS', 'G6', 'S4', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-auntie', nombre: 'Garaje de Auntie\'s Place (Growler rosa de Vanessa)', cat: 'caja_fuerte', codigo: '92665', ancla: 'La Perle', zona: 'Del Rio Blvd, frente a TWA Ponya Tattoo',
+    desc: '⚠ El código deja de funcionar en el Capítulo 4: sácalo antes de "The Cartel Heist".', pista: 'Mensajes en la laptop de Boobie (depa de Bayside Apartments). Contraseña de la laptop: MuffinsQueen15.',
+    botin: 'El Pfister Growler rosa de Vanessa, gratis.', requisitos: 'Capítulo 3', fuentes: ['TBS', 'G6', 'I'], estado: 'confirmado', etiquetas: ['Perdible'] },
+  { id: 'cf-casa-empeno', nombre: 'Casa de Empeño — caja trasera', cat: 'caja_fuerte', codigo: '1680', ancla: 'Ocean Beach', zona: 'Oficina trasera (caja de seguridad a la izquierda)',
+    desc: 'Golpe de joyería de Yasmani.', botin: 'Cadena con calavera de búfalo.', requisitos: 'Capítulo 3, después de "Boobie Time"', fuentes: ['GG', 'TBS', 'G6', 'S4', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-richardson', nombre: 'Richardson Jewelry & Diamonds — caja', cat: 'caja_fuerte', codigo: '6815', ancla: 'Downtown', zona: 'Esquina noreste del cuarto central',
+    desc: 'Golpe de joyería de Yasmani.', botin: 'Anillo de diamantes.', requisitos: 'Capítulo 3', fuentes: ['GG', 'TBS', 'G6', 'S4', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-donovan', nombre: 'Donovan Banks & Co. — caja', cat: 'caja_fuerte', codigo: '0104', ancla: 'Peacock Bay', zona: 'A la mitad del cuarto largo del fondo',
+    desc: 'Golpe de joyería de Yasmani. Escribe el cero inicial. Un robo posterior podría usar 1822.', botin: 'Collar de amatista.', requisitos: 'Capítulo 3', fuentes: ['GG', 'TBS', 'G6', 'S4', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-marbelle', nombre: 'Marbelle Hotel (embrujado) — caja', cat: 'caja_fuerte', codigo: '955214', ancla: 'Crosstown', zona: 'Caja de la planta baja (NW 8th St)',
+    desc: 'Evento del hotel embrujado: al abrir la caja se acaba la niebla.', pista: 'Número encerrado en círculo en una "Old Note" (en la azotea, tras la aparición).', botin: 'Algunos miles de dólares y un reloj Crowex.', fuentes: ['G6', 'S4', 'I'], estado: 'confirmado' },
+  { id: 'cf-be-puerta', nombre: 'Black Eagle — puerta de la oficina', cat: 'caja_fuerte', codigo: '789987', ancla: 'Balsero', zona: 'Bodega junto a la armería Black Eagle',
+    pista: 'Nota en la oficina de la armería: los números del blanco de tiro, de izquierda a derecha, sin el centro.', fuentes: ['G6', 'S4', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-be-caja', nombre: 'Black Eagle — caja de la oficina', cat: 'caja_fuerte', codigo: '031462', ancla: 'Balsero', zona: 'Dentro de la oficina',
+    pista: 'La fecha de nacimiento en la pantalla de inicio de la computadora.', botin: 'Pistola Black Eagle Import Kalinga .50 y efectivo.', fuentes: ['G6', 'S4', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-carrier', nombre: 'Leonida Carrier Warehouse — caja', cat: 'caja_fuerte', codigo: '9256', ancla: 'Balsero', zona: 'Oficina trasera (entra por la escotilla del techo)',
+    desc: 'Operación de los Guardia Brothers.', fuentes: ['G6', 'S4', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-saber-facility', nombre: 'Saber Shipping Facility — caja', cat: 'caja_fuerte', codigo: '1122', ancla: 'Balsero', zona: 'Westbrook Dr, borde sureste — cuarto junto a las escaleras',
+    desc: 'Operación de los Guardia Brothers. Algunas guías dicen 1965, pero ese es el de Casa Guardia.', pista: 'Tablero en el mismo cuarto.', botin: 'Un Guardia Brothers VF5 en un estuche al pie de la escalera.', fuentes: ['G6', 'S4', 'I'], estado: 'una_fuente' },
+  { id: 'cf-saber-yard', nombre: 'Saber Shipping Yard — caja', cat: 'caja_fuerte', codigo: '8046', ancla: 'Little Cuba', zona: 'Northbrook Dr — caja de la oficina',
+    desc: 'Operación de los Guardia Brothers.', pista: 'Mapa/tablero en una oficina que lista 8046 y 1965.', botin: 'Unos $9,700.', fuentes: ['TBS', 'G6', 'S4', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-casa-guardia', nombre: 'Casa Guardia — caja fuerte', cat: 'caja_fuerte', codigo: '1965', ancla: 'Little Cuba', zona: 'NW 3rd Ave, al norte de la tienda de vapes de Yasmani — cuarto de municiones',
+    desc: 'Operación de los Guardia Brothers.', pista: 'El tablero de Saber Shipping.', botin: 'Unos $9,600.', requisitos: 'Capítulo 3', fuentes: ['TBS', 'G6', 'S4', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-southside-storage', nombre: 'Southside Storage — garaje (Cheetah 1010)', cat: 'caja_fuerte', codigo: '1010', ancla: 'Salton', px: [905, 1110], zona: 'Punta sur de Salton, al norte de Slator Towing',
+    pista: 'Cinco murales con "1010".', botin: 'El Cheetah "1010".', fuentes: ['G6'], estado: 'una_fuente' },
+  { id: 'cf-no-flushers', nombre: 'Escondite de los No Flushers — garaje', cat: 'caja_fuerte', codigo: '8554013', ancla: 'Ocean Beach', zona: 'Garaje cerrado',
+    desc: 'Se desbloquea tras escanear 10 grafitis "No Flusher".', pista: 'Atrás de la nota junto a la puerta; la computadora de adentro da la dirección de Andrew Node.', botin: 'Truffade Thrax.', fuentes: ['G6'], estado: 'una_fuente' },
+  { id: 'cf-chatfield', nombre: 'Chatfield Storage & Logistics — caja', cat: 'caja_fuerte', codigo: '5800', ancla: 'Waxman Island', zona: 'Oficina de arriba (escalera exterior), junto al Pay \'n\' Spray',
+    desc: 'Patio del Coquette D10.', pista: 'Correo en una laptop dentro de un contenedor abierto del patio.', botin: 'Unos $1,900–$9,000 y la pistola Quarter Mile ES9.', fuentes: ['G6', 'S4', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-first-impressions', nombre: 'Garaje de "First Impressions"', cat: 'caja_fuerte', codigo: '2404', ancla: 'Waxman Island', zona: 'Panel de la pared del área de carga',
+    pista: 'Se guarda en las Notas de tu teléfono. (Para Savannah Storage se usa 2404#.)', botin: 'El auto negro de Raul.', requisitos: 'Capítulo 3, primera misión', fuentes: ['G6', 'S4', 'I'], estado: 'confirmado' },
+  { id: 'cf-kitty-litter', nombre: 'Laboratorio Kitty Litter — garaje central', cat: 'caja_fuerte', codigo: '1999', ancla: 'Balsero', pista: 'Un espectacular cercano.', botin: 'Acceso al laboratorio (~$2,500).', fuentes: ['G6', 'I'], estado: 'confirmado' },
+  { id: 'cf-icegem', nombre: 'Icegem Diamonds & Watches — caja', cat: 'atraco', codigo: 'Varía', ancla: 'Downtown', zona: 'East Royale St — mesa de trabajo del cuarto trasero',
+    desc: 'Las guías reportan 4228, 6405 y 9744: el código cambia por partida.', pista: 'Nota sobre el escritorio/mesa de trabajo.', botin: 'Joyas.', requisitos: 'Capítulo 3 o después', fuentes: ['S4', 'H'], estado: 'una_fuente' },
+  { id: 'cf-gloriana', nombre: 'Casa vigilada de Gloriana Key — caja', cat: 'caja_fuerte', codigo: '4567', ancla: 'Gloriana Key', zona: 'Oficina del piso de arriba', pista: 'En la planta baja.', fuentes: ['S4'], estado: 'una_fuente' },
+  { id: 'cf-mansion-tigre', nombre: 'Mansión del tigre — caja de la oficina', cat: 'caja_fuerte', codigo: '4377', ancla: 'Peacock Estates', zona: 'Casa vigilada con tigre enjaulado — oficina de arriba',
+    pista: 'Nota adhesiva en la recepción.', botin: 'Unos $550.', fuentes: ['H'], estado: 'una_fuente' },
+  { id: 'cf-sharktooth-puerta', nombre: 'Búnker presidencial — puerta', cat: 'caja_fuerte', codigo: '010317', ancla: 'Waning Sands', px: [1095, 590], zona: 'Sharktooth Island, al norte de Waning Sands — teclado de atrás',
+    desc: 'Misterio del presidente Joe Russo. La pista empieza en Friends of Freedom (Downtown).', pista: 'El cumpleaños de Joe Russo.', fuentes: ['G6', 'S4'], estado: 'confirmado' },
+  { id: 'cf-sharktooth-caja', nombre: 'Búnker presidencial — caja', cat: 'caja_fuerte', codigo: '2975', ancla: 'Waning Sands', px: [1097, 592], zona: 'Sharktooth Island — caja de la oficina',
+    pista: 'Ordena los números de las cintas según el "Protocol #2" (en el escritorio hay un papel con 2341).', botin: 'La pistola 1922 de Russo y una foto marcada "OBSESS" (pista del siguiente búnker).', fuentes: ['G6', 'S4'], estado: 'confirmado' },
+
+  // ── Leonard County / Belville ──
+  { id: 'cf-biker', nombre: 'Biker Hideout (The Thirsty Wolf) — caja', cat: 'caja_fuerte', codigo: '1982', ancla: 'Belville', zona: 'Cuarto trasero pasando la mesa de billar',
+    pista: 'El año de fundación en la bandera negra junto a la puerta de salida.', botin: 'Efectivo y el revólver Ride Free H&L .38.', requisitos: 'Las guías no coinciden: Capítulo 2 o capítulo final', fuentes: ['G6', 'S4', 'I'], estado: 'confirmado' },
+  { id: 'cf-lavanderia', nombre: 'Lavandería abandonada — caja de pared', cat: 'caja_fuerte', codigo: '62412', ancla: 'Belville', zona: 'Noroeste de Belville, al sur del Biker Hideout (entra por el techo)',
+    pista: 'Escrito debajo de la carta coleccionable de Delord Nathan Alford.', fuentes: ['G6', 'S4', 'I', 'BL'], estado: 'confirmado' },
+  { id: 'cf-farm-fix', nombre: 'Farm Fix (laboratorio de metanfetamina) — caja', cat: 'caja_fuerte', codigo: '2121', ancla: 'Leonard County', px: [935, 760], zona: 'Al norte de Belville, Chastity Ave (granja McKittrick) — oficina de arriba',
+    pista: 'Libreta con el número en rojo, en la mesa del cuarto de empaque.', botin: 'Unos $2,600–$3,000, la escopeta Throttler Verro y una Western Searing Zombie Bobber.', requisitos: 'Operación del capítulo final', fuentes: ['TBS', 'G6', 'S4', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-pete-hangar', nombre: 'Hangar de Pilot Pete — caja', cat: 'caja_fuerte', codigo: '3718', ancla: 'Leonard County', zona: 'Sundown Private Airfield — cuarto trasero tras la puerta roja',
+    botin: 'La KZ-59 única de Pete y más botín.', requisitos: 'Capítulo 4, "The Last Mile: Passing the Torch"', fuentes: ['G6', 'S4', 'H', 'I'], estado: 'confirmado' },
+
+  // ── Kelly / Lummox ──
+  { id: 'cf-red-apple', nombre: 'Red Apple Orchard — garaje', cat: 'caja_fuerte', codigo: '360782', ancla: 'Manifest Canyon', px: [511, 585], zona: 'Huerto de Father Scrumpy, al oeste de Manifest Canyon',
+    pista: 'Revista ManlyGaze en el tapanco del granero grande.', botin: 'Declasse Applesauce Bobcat.', fuentes: ['G6', 'I'], estado: 'confirmado' },
+  { id: 'cf-emerald-casa', nombre: 'Casa abandonada de Emerald Springs — caja', cat: 'caja_fuerte', codigo: '23554', ancla: 'Emerald Springs', zona: 'Casa con hoyo en el techo',
+    pista: 'Los dígitos están arriba de la letrina; se ven desde el techo.', fuentes: ['S4'], estado: 'una_fuente' },
+  { id: 'cf-vamos', nombre: 'Garaje del Declasse Vamos \'74', cat: 'caja_fuerte', codigo: '2727', ancla: 'Grayson', zona: 'Cabaña en el bosque (Rockledge Rd), suroeste de Lummox',
+    pista: 'Tres placas con "2727" en la pared de la cabaña de al lado.', botin: 'Declasse Vamos \'74 (Moses lo compra en ~$4,200).', requisitos: 'Encargo de Moses', fuentes: ['TBS', 'G6', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-kalaga-torre', nombre: 'Torre de vigilancia de Mount Kalaga — cobertizo', cat: 'caja_fuerte', codigo: '69185', ancla: 'Mount Kalaga', zona: 'Cobertizo bajo la torre Stone Hills (fire lookout)',
+    pista: 'Nota adhesiva morada en lo alto de la torre. (691865 es una errata de algunas guías.)', botin: 'Bitácora.', fuentes: ['G6', 'H', 'I'], estado: 'confirmado' },
+  { id: 'cf-carter-mining', nombre: 'Carter Mining Boathouse — caja', cat: 'caja_fuerte', codigo: '1686', ancla: 'Bonanza', zona: 'Cuarto del sótano',
+    desc: 'Las guías no coinciden: 1686 (GTA6Heists) o 9842 (GTA6Pocket). Prueba ambos.', pista: 'Nota adhesiva verde/amarilla en la mesa de empaque.', botin: 'Unos $1,900 en objetos de valor.', fuentes: ['H', 'G6'], estado: 'una_fuente' },
+
+  // ── Keys / mar ──
+  { id: 'cf-burg', nombre: 'Instalación submarina BURG — caja', cat: 'caja_fuerte', codigo: '80085', ancla: 'Riquezas Keys', px: [300, 1745], zona: 'Al oeste de Mile Zero, bajo la plataforma amarilla (entra por la escotilla)',
+    pista: 'Correo en la laptop/computadora de la instalación.', botin: 'Un meteorito.', requisitos: 'Bucear', fuentes: ['G6', 'S4'], estado: 'confirmado' },
+  { id: 'cf-belpoint-naufragio', nombre: 'Naufragio de Belpoint — caja', cat: 'caja_fuerte', codigo: '4242', ancla: 'Belpoint', zona: 'En el barco hundido',
+    pista: 'La combinación está detrás de un cuadro.', botin: 'Efectivo.', fuentes: ['I', 'S4'], estado: 'rumor' },
+];
+POIS.push(...CAJAS);
+
+/* Notas útiles en puntos que ya existían */
+for (const [id, codigo] of [['carta-laki', '44017'], ['carta-delord', '62412'], ['coquette-spiderweb', '092319'], ['gauntlet-m7', '7777'], ['firebug-dominator', '6969']]) {
+  const p = POIS.find(x => x.id === id); if (p) p.codigo = codigo;
+}
+
 /* Coloca cada punto en el mapa a partir de su zona. */
 (function ubicarPuntos() {
   const hash = s => { let h = 2166136261; for (const c of s) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return (h >>> 0) / 4294967295; };
@@ -395,6 +540,10 @@ const POIS = [
     if (!p.region) p.region = a[3];
     if (!p.zona) p.zona = p.ancla;
     else if (!p.zona.includes(p.ancla)) p.zona = `${p.ancla} — ${p.zona}`;
+    if (p.px && (p.x == null || p.y == null)) {
+      p.x = Math.round((p.px[0] - 48) * 10000 / 1364) / 10 + (hash(p.id) - 0.5) * 2;
+      p.y = Math.round((p.px[1] - 48) * 10000 / 1364) / 10 + (hash(p.id + '·') - 0.5) * 2;
+    }
     if (p.x == null || p.y == null) {
       const ang = hash(p.id) * Math.PI * 2, r = a[2] * Math.sqrt(hash(p.id + '·'));
       p.x = Math.round((a[0] + Math.cos(ang) * r) * 10) / 10;
