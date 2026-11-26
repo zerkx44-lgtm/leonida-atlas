@@ -19,12 +19,15 @@
     if (dentro) cargar();
   }
 
+  let widgetLogin = null;
+  if (!demo && Captcha.activo()) Captcha.montar($('#login-captcha')).then(w => { widgetLogin = w; }).catch(ex => { $('#login-error').textContent = ex.message; $('#login-error').hidden = false; });
   $('#form-login').addEventListener('submit', async e => {
     e.preventDefault();
     const f = e.target, err = $('#login-error');
     err.hidden = true;
-    try { await Store.login(f.email.value.trim(), f.clave.value); f.reset(); mostrar(); }
-    catch (ex) { err.textContent = ex.message; err.hidden = false; }
+    if (!demo && Captcha.activo() && !widgetLogin?.token()) { err.textContent = 'Completa la verificación anti-bots.'; err.hidden = false; return; }
+    try { await Store.login(f.email.value.trim(), f.clave.value, widgetLogin?.token()); f.reset(); mostrar(); }
+    catch (ex) { widgetLogin?.reset(); err.textContent = ex.message; err.hidden = false; }
   });
   $('#btn-salir').addEventListener('click', () => { Store.logout(); mostrar(); });
 

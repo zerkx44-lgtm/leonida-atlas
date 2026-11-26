@@ -7,8 +7,8 @@
   <title>Moderación — Leonida Atlas</title>
   <meta name="theme-color" content="#0b1d2a">
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/app.css?v=6">
-  <link rel="stylesheet" href="css/admin.css?v=6">
+  <link rel="stylesheet" href="css/app.css?v=7">
+  <link rel="stylesheet" href="css/admin.css?v=7">
 </head>
 <body class="admin">
   <header class="topbar">
@@ -26,6 +26,7 @@
       <form id="form-login">
         <label class="campo" id="campo-email">Correo<input name="email" type="email" autocomplete="username"></label>
         <label class="campo"><span id="lbl-clave">Contraseña</span><input name="clave" type="password" autocomplete="current-password" required></label>
+        <div id="login-captcha" class="chat-captcha"></div>
         <p class="error" id="login-error" hidden></p>
         <button class="btn primario" type="submit">Entrar</button>
       </form>
@@ -63,11 +64,11 @@
 
   <div id="toast" class="toast" role="status" hidden></div>
 
-  <script src="js/config.js?v=6"></script>
-  <script src="js/data.js?v=6"></script>
-  <script src="js/moderation.js?v=6"></script>
-  <script src="js/store.js?v=6"></script>
-  <script src="js/comun.js?v=6"></script>
-  <script src="js/admin.js?v=6"></script>
+  <script src="js/config.js?v=7"></script>
+  <script src="js/data.js?v=7"></script>
+  <script src="js/moderation.js?v=7"></script>
+  <script src="js/store.js?v=7"></script>
+  <script src="js/comun.js?v=7"></script>
+  <script src="js/admin.js?v=7"></script>
 </body>
 </html>

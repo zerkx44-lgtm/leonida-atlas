@@ -86,3 +86,31 @@ const ESTADOS = {
   rumor: { txt: 'Rumor — sin verificar', icono: '❓' },
   comunidad: { txt: 'Aporte de la comunidad', icono: '👥' },
 };
+
+/* Captcha (Cloudflare Turnstile). Solo se usa si hay TURNSTILE_SITE_KEY en config.js. */
+const Captcha = (() => {
+  let carga = null;
+  const activo = () => !!window.ATLAS_CONFIG?.TURNSTILE_SITE_KEY;
+  function script() {
+    if (window.turnstile) return Promise.resolve();
+    if (!carga) carga = new Promise((ok, mal) => {
+      const s = document.createElement('script');
+      s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+      s.async = true; s.onload = ok; s.onerror = () => mal(new Error('No se pudo cargar la verificación anti-bots'));
+      document.head.appendChild(s);
+    });
+    return carga;
+  }
+  /* Pinta el widget en `contenedor` y devuelve un objeto con token() y reset(). */
+  async function montar(contenedor) {
+    if (!activo()) return { token: () => null, reset() {} };
+    await script();
+    let valor = null;
+    const id = window.turnstile.render(contenedor, {
+      sitekey: window.ATLAS_CONFIG.TURNSTILE_SITE_KEY, language: 'es', theme: 'dark', size: 'flexible',
+      callback: t => { valor = t; }, 'expired-callback': () => { valor = null; }, 'error-callback': () => { valor = null; },
+    });
+    return { token: () => valor || window.turnstile.getResponse(id) || null, reset: () => { valor = null; window.turnstile.reset(id); } };
+  }
+  return { activo, montar };
+})();

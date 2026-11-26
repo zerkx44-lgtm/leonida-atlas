@@ -35,3 +35,5 @@ mark { background: #ff4f9a; color: #fff; border-radius: 3px; padding: 0 2px; }
 .meta-chat { font-size: 13px; color: var(--tenue); }
 .chat-adm { grid-template-columns: 140px 1fr; }
 @media (max-width: 640px) { .chat-adm { grid-template-columns: 1fr; } }
+
+.login .chat-captcha:not(:empty) { margin: 6px 0 10px; min-height: 65px; }

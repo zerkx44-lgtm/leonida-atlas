@@ -65,7 +65,7 @@ const Store = (() => {
   }
 
   /* ---------- ADMIN ---------- */
-  async function login(usuario, clave) {
+  async function login(usuario, clave, captchaToken) {
     if (MODO === 'demo') {
       if (clave !== C.DEMO_ADMIN_PIN) throw new Error('PIN incorrecto');
       sessionStorage.setItem(KEY_SESION, JSON.stringify({ demo: true, email: 'demo' }));
@@ -73,7 +73,7 @@ const Store = (() => {
     }
     const res = await fetch(`${C.SUPABASE_URL}/auth/v1/token?grant_type=password`, {
       method: 'POST', headers: { apikey: C.SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: usuario, password: clave }),
+      body: JSON.stringify({ email: usuario, password: clave, ...(captchaToken ? { gotrue_meta_security: { captcha_token: captchaToken } } : {}) }),
     });
     const j = await res.json();
     if (!res.ok) throw new Error(j.error_description || j.msg || 'No se pudo iniciar sesión');

@@ -44,3 +44,5 @@ body.chat-abierto .chat-fab { display: none; }
   .chat-fab { bottom: calc(60px + env(safe-area-inset-bottom)); padding: 10px 14px; }
   .chat-fab span { display: none; }
 }
+
+.chat-captcha:not(:empty) { margin: 6px 0 8px; min-height: 65px; }

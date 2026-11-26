@@ -38,7 +38,7 @@
   const $ = s => document.querySelector(s);
   const panel = $('#chat'), lista = $('#chat-lista'), pie = $('#chat-pie');
 
-  let mensajes = [], abierto = false, timer = null, enviando = false;
+  let mensajes = [], abierto = false, timer = null, enviando = false, widget = null;
 
   /* ───── Sesión anónima ───── */
   const sesion = () => JSON.parse(localStorage.getItem(K_SES) || 'null');
@@ -50,12 +50,20 @@
     localStorage.setItem(K_SES, JSON.stringify(s));
     return s;
   }
+  /* Crea la cuenta anónima; con captcha activo necesita el token del widget. */
+  async function crearCuenta(captchaToken) {
+    if (Captcha.activo() && !captchaToken) throw new Error('Completa la verificación anti-bots.');
+    return auth('signup', captchaToken ? { gotrue_meta_security: { captcha_token: captchaToken } } : {});
+  }
   async function token() {
     let s = sesion();
-    if (!s) s = await auth('signup', {});
-    else if (Date.now() > s.expira) {
+    if (s && Date.now() > s.expira) {
       try { s = await auth('token?grant_type=refresh_token', { refresh_token: s.refresh }); }
-      catch { localStorage.removeItem(K_SES); s = await auth('signup', {}); }
+      catch { localStorage.removeItem(K_SES); s = null; }
+    }
+    if (!s) {
+      if (Captcha.activo()) { localStorage.removeItem(K_REGLAS); pintarPie(); throw new Error('Tu sesión del chat venció: vuelve a entrar.'); }
+      s = await crearCuenta(null);
     }
     return s.token;
   }
@@ -130,9 +138,12 @@
         <form id="chat-entrar" class="chat-entrar">
           <label class="campo">Tu apodo en el chat<input name="apodo" maxlength="24" minlength="2" required value="${esc(apodo || '')}" placeholder="Ej. ViceRider"></label>
           <label class="check"><input type="checkbox" name="reglas" required> <span>Acepto las <button type="button" class="link" data-ver-reglas>reglas del chat</button>.</span></label>
+          <div id="chat-captcha" class="chat-captcha"></div>
           <p class="error" id="chat-error" hidden></p>
           <button class="btn primario">Entrar al chat</button>
         </form>`;
+      widget = null;
+      if (!sesion() && Captcha.activo()) Captcha.montar($('#chat-captcha')).then(w => { widget = w; }).catch(ex => error(ex.message));
       return;
     }
     pie.innerHTML = `
@@ -153,7 +164,10 @@
       if (apodo.length < 2) return error('El apodo necesita al menos 2 letras.');
       if (Moderacion.revisar({ apodo }).bloqueado) return error('Ese apodo no está permitido. Elige otro.');
       if (!f.reglas.checked) return error('Acepta las reglas para entrar.');
-      try { await token(); } catch (ex) { return error(ex.message); }
+      try {
+        if (!sesion()) await crearCuenta(widget?.token());
+        else await token();
+      } catch (ex) { widget?.reset(); return error(/captcha/i.test(ex.message) ? 'La verificación anti-bots falló; inténtalo de nuevo.' : ex.message); }
       localStorage.setItem(K_APODO, apodo); localStorage.setItem(K_REGLAS, '1');
       pintarPie(); $('#chat-form textarea')?.focus();
       return;
