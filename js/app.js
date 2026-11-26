@@ -20,17 +20,26 @@
   /* ---------- Mapa ---------- */
   const limites = [[0, 0], [MAPA_H, MAPA_W]];
   const map = L.map('map', {
-    crs: L.CRS.Simple, minZoom: -1.5, maxZoom: 3, zoomSnap: 0.25, zoomDelta: 0.5,
+    crs: L.CRS.Simple, minZoom: -1.5, maxZoom: 4, zoomSnap: 0.25, zoomDelta: 0.5,
     maxBounds: [[-200, -200], [MAPA_H + 200, MAPA_W + 200]], attributionControl: true, zoomControl: !('ontouchstart' in window),
   });
-  L.imageOverlay('assets/leonida.svg', limites).addTo(map);
+  L.imageOverlay('assets/leonida.svg?v=2', limites).addTo(map);
   map.attributionControl.setPrefix(false).addAttribution('Mapa ilustrativo de fans · Datos: guías de la comunidad');
   map.fitBounds(limites);
   const escalaPins = () => {
     const z = map.getZoom();
-    document.getElementById('map').dataset.z = z < 0 ? 'lejos' : z < 1 ? 'medio' : 'cerca';
+    document.getElementById('map').dataset.z = z < 0.5 ? 'lejos' : z < 1.75 ? 'medio' : 'cerca';
+    document.getElementById('map').classList.toggle('ver-rotulos', z >= 1.75);
   };
   map.on('zoomend', escalaPins); escalaPins();
+
+  /* Rótulos de colonias y zonas (aparecen al acercarse) */
+  const rotulos = L.layerGroup().addTo(map);
+  for (const [nombre, [x, y, r]] of Object.entries(ANCLAS)) {
+    if (r > 6) continue;
+    L.marker(aLatLng(x, y), { interactive: false, keyboard: false, zIndexOffset: -1000,
+      icon: L.divIcon({ className: 'rotulo', html: `<span>${esc(nombre)}</span>`, iconSize: [0, 0] }) }).addTo(rotulos);
+  }
 
   function icono(p) {
     const c = CATEGORIAS[p.cat] || { icono: '📍', color: '#999' };
@@ -145,7 +154,7 @@
     if (estabaOculta) map.invalidateSize({ pan: false });
     activarVideos(f);
     if (esMovil()) cerrar('panel');
-    if (volar) map.flyTo(aLatLng(p.x, p.y), Math.max(map.getZoom(), 1.5), { duration: 0.6 });
+    if (volar) map.flyTo(aLatLng(p.x, p.y), Math.max(map.getZoom(), p.region === 'Vice City' ? 3 : 2), { duration: 0.6 });
     history.replaceState(null, '', `#poi=${encodeURIComponent(id)}`);
     pintarLista(todos.filter(coincide));
   }
@@ -191,7 +200,7 @@
       ? `📍 Toca la ubicación correcta de “${opciones.poi.nombre}” (o el mismo punto si solo agregas info/video)`
       : '📍 Toca el mapa donde está el lugar';
     document.body.classList.add('agregando');
-    if (opciones.poi) map.flyTo(aLatLng(opciones.poi.x, opciones.poi.y), Math.max(map.getZoom(), 1.5));
+    if (opciones.poi) map.flyTo(aLatLng(opciones.poi.x, opciones.poi.y), Math.max(map.getZoom(), 2.5));
   }
   function terminarAgregar() {
     estado.agregando = null;
@@ -266,7 +275,7 @@
   $('#f-region').addEventListener('change', e => {
     estado.region = e.target.value; refrescar();
     const pts = todos.filter(coincide);
-    if (pts.length) map.flyToBounds(L.latLngBounds(pts.map(p => aLatLng(p.x, p.y))).pad(0.3), { duration: 0.6, maxZoom: 2 });
+    if (pts.length) map.flyToBounds(L.latLngBounds(pts.map(p => aLatLng(p.x, p.y))).pad(0.3), { duration: 0.6, maxZoom: 3 });
   });
   $('#f-categorias').addEventListener('click', e => {
     const b = e.target.closest('[data-cat]'); if (!b) return;

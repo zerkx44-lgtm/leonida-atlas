@@ -15,9 +15,9 @@ const Store = (() => {
     const ahora = Date.now();
     const semilla = [
       { id: 'demo-1', created_at: new Date(ahora - 864e5).toISOString(), titulo: 'Mirador para fotos al atardecer', mensaje: 'Sube por la escalera de servicio del lado del mar; desde la azotea se ve toda la bahía. Ideal para el modo foto.',
-        categoria: 'emblematico', video_url: '', apodo: 'Ejemplo', x: 852, y: 846, estado: 'aprobado', banderas: [], nota_admin: '' },
+        categoria: 'emblematico', video_url: '', apodo: 'Ejemplo', x: 700, y: 491, estado: 'aprobado', banderas: [], nota_admin: '' },
       { id: 'demo-2', created_at: new Date(ahora - 36e5).toISOString(), titulo: 'Lancha escondida en el manglar', mensaje: 'Detrás del muelle viejo hay una lancha con la llave puesta. Hay que entrar de noche porque hay guardias.',
-        categoria: 'auto_raro', video_url: '', apodo: 'Ejemplo', x: 640, y: 930, estado: 'pendiente', banderas: [], nota_admin: '' },
+        categoria: 'auto_raro', video_url: '', apodo: 'Ejemplo', x: 480, y: 560, estado: 'pendiente', banderas: [], nota_admin: '' },
     ];
     localStorage.setItem(KEY, JSON.stringify(semilla));
     return semilla;

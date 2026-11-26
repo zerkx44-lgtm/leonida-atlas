@@ -2,8 +2,8 @@
 
 Es una página web que también se instala como app en el celular (PWA, en Android y en iPhone). Incluye:
 
-- **Mapa ilustrado de Leonida** con sus 6 regiones (Vice City, Leonida Keys, Grassrivers, Port Gellhorn, Ambrosia y Mount Kalaga). Es un dibujo propio, no el arte del juego.
-- **90 puntos** tomados de guías públicas de la comunidad: autos raros y ocultos, escondites, eventos diarios, atracos, misterios, tiendas, ropa, restaurantes, bares, bancos, hoteles, talleres, gasolineras, transporte, policía, ocio y lugares emblemáticos.
+- **Mapa ilustrado de Leonida** con la silueta real del estado (costa, ríos y lagos), sus 6 regiones, condados, carreteras y rótulos de colonias que aparecen al acercarte. Es un dibujo propio (`tools/generar_mapa.py`), no el arte del juego.
+- **175 puntos** tomados de guías públicas de la comunidad: autos raros y ocultos, escondites, **coleccionables** (cartas, meteoritos, flamencos, escaneos WAiNK, aros, saltos, revistas, armas únicas), **28 eventos aleatorios**, tiendas, ropa, restaurantes, bares, bancos, hoteles, talleres, gasolineras, transporte, policía, ocio y lugares emblemáticos.
 - **Filtros** por categoría (agrupadas como en el juego), por región y por confiabilidad del dato (✅ confirmado por 2+ fuentes, 📘 1 fuente, ❓ rumor, 👥 comunidad), además de un buscador.
 - **Fichas con truco paso a paso**: hora, requisitos (misión, Snap Gun, Key Cloner…) y **video** de YouTube o TikTok que se reproduce ahí mismo. Los links de X, Instagram, Facebook, Twitch y Kick se muestran como botón.
 - **Progreso personal**: marcar "encontrado" y guardar favoritos en el celular.
@@ -47,16 +47,18 @@ Seguridad en producción: el público solo puede *insertar* aportes, que siempre
 |---|---|
 | `index.html`, `js/app.js` | Mapa, filtros, fichas y formulario de aportes |
 | `admin.html`, `js/admin.js`, `css/admin.css` | Panel de moderación |
-| `js/data.js` | **Datos del mapa**: categorías, regiones y puntos. Aquí se agregan o corrigen los puntos oficiales |
+| `js/data.js` | **Datos del mapa**: categorías, zonas (`ANCLAS`) y puntos. Cada punto se ubica por su zona; si conoces la posición exacta pon `x` y `y` |
+| `tools/generar_mapa.py`, `tools/geo/` | Genera `assets/leonida.svg` (silueta, colores, carreteras y rótulos) |
 | `js/moderation.js` | Filtro de groserías y spam |
 | `js/store.js` | Guardado (modo demo o Supabase) |
-| `assets/leonida.svg` | Mapa ilustrado (coordenadas 1000 × 1300) |
+| `assets/leonida.svg` | Mapa ilustrado (coordenadas 1000 × 1000) |
 | `sw.js`, `manifest.webmanifest` | App instalable y uso sin conexión |
 | `supabase/schema.sql` | Base de datos y reglas de seguridad |
 
 ## Sobre los datos
 
-- Fuentes: GTA Xtreme, TheBestMods y Vice6Map (consultadas el 25-nov-2026, a una semana del lanzamiento). Cada ficha enlaza a su fuente.
+- Fuentes: GTA Xtreme, TheBestMods, The Big Lead, GTAScoop, MapMaster, AllGTAWorld, TheBaseDotaku, Vice6Map y GTA6Maps (consultadas el 25-nov-2026, a una semana del lanzamiento). Cada ficha enlaza a su fuente.
+- La silueta de la costa se trazó a baja resolución a partir de un mapa de la comunidad; el dibujo, colores y rótulos son propios.
 - **Las posiciones en el mapa son aproximadas.** Las guías dan zona y calle, no coordenadas exactas. Los aportes de corrección sirven justo para afinarlas.
 - Las guías a veces se contradicen. Por ejemplo, el Penumbra FF aparece en Vespucci Island según una guía y en Neptune Circle según otra. En esos casos la ficha lo indica.
 - Sitio de fans **no oficial**, sin relación con Rockstar Games ni Take-Two. No usa logos ni arte del juego.

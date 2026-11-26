@@ -1,5 +1,5 @@
 /* Utilidades compartidas por el mapa y el panel de administración. */
-const MAPA_W = 1000, MAPA_H = 1300;
+const MAPA_W = 1000, MAPA_H = 1000;
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 

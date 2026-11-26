@@ -40,7 +40,7 @@ a { color: var(--cian); }
 .layout { position: relative; height: calc(100% - var(--top) - env(safe-area-inset-top)); display: flex; }
 .panel { width: 340px; flex-shrink: 0; overflow-y: auto; background: var(--panel); border-right: 1px solid var(--borde); padding: 12px; }
 .mapa-wrap { position: relative; flex: 1; }
-#map { position: absolute; inset: 0; background: #0b3954; }
+#map { position: absolute; inset: 0; background: #0d2f47; }
 body.agregando #map, body.agregando .leaflet-interactive { cursor: crosshair; }
 
 .bloque { margin-bottom: 14px; }
@@ -85,6 +85,10 @@ body.agregando #map, body.agregando .leaflet-interactive { cursor: crosshair; }
 #map[data-z=lejos] .pin { transform: scale(.55); }
 #map[data-z=medio] .pin { transform: scale(.78); }
 #map[data-z] .pin.sel { transform: scale(1.35); }
+.rotulo { pointer-events: none; }
+.rotulo span { position: absolute; transform: translate(-50%, -50%); white-space: nowrap; font: 700 11px/1 'Arial Narrow', Arial, sans-serif;
+  letter-spacing: .06em; text-transform: uppercase; color: #fff; text-shadow: 0 0 3px #000, 0 0 6px #000; opacity: 0; transition: opacity .2s; }
+#map.ver-rotulos .rotulo span { opacity: .85; }
 .pin.rumor { border-style: dashed; }
 .pin.comunidad { box-shadow: 0 0 0 3px rgba(255,255,255,.85), 0 2px 8px rgba(0,0,0,.55); }
 .pin.hecho { opacity: .45; }
