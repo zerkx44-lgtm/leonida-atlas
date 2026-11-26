@@ -1,0 +1,32 @@
+body.admin { overflow: auto; }
+.admin-main { max-width: 1000px; margin: 0 auto; padding: 18px 14px 60px; }
+.tarjeta { background: var(--panel); border: 1px solid var(--borde); border-radius: var(--radio); padding: 18px; }
+.login { max-width: 400px; margin: 40px auto; }
+.login h1 { margin-top: 0; font-size: 22px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; align-items: center; }
+.tabs [role=tab] { background: var(--panel); border: 1px solid var(--borde); border-radius: 999px; padding: 8px 14px; }
+.tabs [role=tab].on { border-color: var(--rosa); background: color-mix(in srgb, var(--rosa) 20%, transparent); }
+.tabs em { font-style: normal; background: var(--panel-2); border-radius: 999px; padding: 1px 7px; font-size: 12px; margin-left: 4px; }
+#btn-recargar { margin-left: auto; }
+.cola { display: grid; gap: 12px; }
+.aporte { background: var(--panel); border: 1px solid var(--borde); border-radius: var(--radio); padding: 14px; display: grid; grid-template-columns: 180px 1fr; gap: 14px; }
+.aporte.alerta { border-color: var(--rosa); box-shadow: 0 0 0 1px var(--rosa) inset; }
+.mini-mapa { width: 180px; height: 180px; border-radius: 10px; background: #0b3954 url(../assets/leonida.svg) no-repeat; position: relative; overflow: hidden; border: 1px solid var(--borde); }
+.mini-mapa::after { content: '📍'; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -85%); font-size: 26px; filter: drop-shadow(0 2px 2px #000); }
+.aporte h3 { margin: 0 0 4px; font-size: 17px; }
+.meta { font-size: 12px; color: var(--tenue); margin-bottom: 8px; display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.mensaje { white-space: pre-wrap; font-size: 15px; line-height: 1.5; background: var(--panel-2); padding: 10px; border-radius: 8px; margin: 0 0 8px; }
+.banderas { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.bandera { font-size: 12px; padding: 3px 8px; border-radius: 6px; background: #4a3a0b; color: var(--amarillo); }
+.bandera.roja { background: #4c0d1f; color: #ffb3c8; }
+mark { background: #ff4f9a; color: #fff; border-radius: 3px; padding: 0 2px; }
+.botones { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.btn.aprobar { background: #15803d; border-color: #22c55e; color: #fff; font-weight: 700; }
+.btn.rechazar { background: #7f1d1d; border-color: #ef4444; color: #fff; }
+.editar { display: grid; gap: 6px; margin-top: 8px; }
+.vacio-cola { text-align: center; color: var(--tenue); padding: 40px; border: 1px dashed var(--borde); border-radius: var(--radio); }
+@media (max-width: 640px) {
+  .aporte { grid-template-columns: 1fr; }
+  .mini-mapa { width: 100%; height: 160px; }
+  .marca span { display: inline; font-size: 15px; }
+}

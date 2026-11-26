@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Leonida Atlas — Mapa interactivo de fans para GTA VI</title>
+  <meta name="description" content="Mapa interactivo hecho por fans de Leonida y Vice City: autos ocultos, escondites, eventos, tiendas, talleres y trucos con video.">
+  <meta name="theme-color" content="#0b1d2a">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="marca" href="./" aria-label="Leonida Atlas, inicio">
+      <img src="assets/icon.svg" alt="" width="30" height="30">
+      <span><b>Leonida</b> Atlas</span>
+    </a>
+    <label class="buscar">
+      <span aria-hidden="true">🔍</span>
+      <input id="q" type="search" placeholder="Buscar auto, negocio, zona…" autocomplete="off">
+    </label>
+    <div class="acciones">
+      <button id="btn-instalar" class="btn ghost" hidden>📲 Instalar app</button>
+      <button id="btn-filtros" class="btn ghost solo-movil" aria-controls="panel">☰ Filtros</button>
+      <button id="btn-agregar" class="btn primario">＋ Agregar punto</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside id="panel" class="panel" aria-label="Filtros y resultados">
+      <div class="panel-cab solo-movil">
+        <b>Filtros</b><button class="cerrar" data-cerrar="panel" aria-label="Cerrar filtros">✕</button>
+      </div>
+
+      <section class="bloque">
+        <label class="campo">Región
+          <select id="f-region"><option value="">Todo Leonida</option></select>
+        </label>
+        <div class="fila-chips" id="f-estado" role="group" aria-label="Confiabilidad">
+          <button class="chip mini on" data-estado="confirmado">✅ Confirmado</button>
+          <button class="chip mini on" data-estado="una_fuente">📘 1 fuente</button>
+          <button class="chip mini on" data-estado="rumor">❓ Rumor</button>
+          <button class="chip mini on" data-estado="comunidad">👥 Comunidad</button>
+        </div>
+        <div class="fila-chips">
+          <button class="chip mini" id="f-favs">★ Solo favoritos</button>
+          <button class="chip mini" id="f-ocultar">✓ Ocultar encontrados</button>
+        </div>
+      </section>
+
+      <section class="bloque">
+        <div class="bloque-cab">
+          <b>Categorías</b>
+          <span><button class="link" id="cat-todas">Todas</button> · <button class="link" id="cat-ninguna">Ninguna</button></span>
+        </div>
+        <div id="f-categorias"></div>
+      </section>
+
+      <section class="bloque">
+        <div class="bloque-cab"><b>Resultados</b> <span id="conteo" class="tenue"></span></div>
+        <ul id="lista" class="lista"></ul>
+      </section>
+
+      <p class="aviso">
+        Sitio de fans <b>no oficial</b>. No está afiliado a Rockstar Games ni a Take-Two.
+        Datos recopilados de guías públicas de la comunidad; las posiciones en el mapa son aproximadas.
+        <a href="admin.html">Moderación</a>
+      </p>
+    </aside>
+
+    <main class="mapa-wrap">
+      <div id="map" aria-label="Mapa de Leonida"></div>
+      <div id="modo-agregar" class="banda" hidden>
+        <span>📍 Toca el mapa donde está el lugar</span>
+        <button class="btn ghost" id="cancelar-agregar">Cancelar</button>
+      </div>
+      <div class="leyenda-precision">Posiciones aproximadas · <button class="link" id="btn-ayuda">¿Cómo funciona?</button></div>
+    </main>
+
+    <aside id="ficha" class="ficha" aria-live="polite" hidden></aside>
+  </div>
+
+  <!-- Formulario de aporte -->
+  <dialog id="dlg-aporte" class="dialogo">
+    <form id="form-aporte" method="dialog" novalidate>
+      <header class="dlg-cab">
+        <h2 id="aporte-titulo">Agregar punto de interés</h2>
+        <button type="button" class="cerrar" data-cerrar-dlg aria-label="Cerrar">✕</button>
+      </header>
+      <p class="tenue" id="aporte-sub">Tu aporte no se publica en automático: un moderador lo revisa primero.</p>
+      <input type="hidden" name="x"><input type="hidden" name="y">
+      <input type="hidden" name="tipo" value="nuevo"><input type="hidden" name="poi_ref">
+      <label class="campo">Título *
+        <input name="titulo" required minlength="3" maxlength="80" placeholder="Ej. Infernus en el estacionamiento de la comisaría">
+      </label>
+      <label class="campo">Categoría *
+        <select name="categoria" required></select>
+      </label>
+      <label class="campo">Truco / cómo encontrarlo *
+        <textarea name="mensaje" required minlength="10" maxlength="600" rows="4" placeholder="Qué hay, qué puerta abrir, a qué hora aparece, qué misión necesitas…"></textarea>
+        <small class="contador"><span id="cnt">0</span>/600</small>
+      </label>
+      <label class="campo">Link de video (opcional)
+        <input name="video_url" type="url" inputmode="url" placeholder="https://youtube.com/… · tiktok.com/… · x.com/…">
+        <small class="tenue">YouTube, TikTok, X, Instagram, Facebook, Twitch o Kick.</small>
+      </label>
+      <label class="campo">Tu apodo (opcional)
+        <input name="apodo" maxlength="30" placeholder="Cómo quieres aparecer">
+      </label>
+      <label class="check">
+        <input type="checkbox" name="reglas" required>
+        <span>Mi aporte es sobre el juego, no tiene groserías, datos personales ni spam.</span>
+      </label>
+      <p class="error" id="aporte-error" role="alert" hidden></p>
+      <footer class="dlg-pie">
+        <button type="button" class="btn ghost" data-cerrar-dlg>Cancelar</button>
+        <button type="submit" class="btn primario" id="btn-enviar">Enviar a revisión</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <dialog id="dlg-ayuda" class="dialogo">
+    <header class="dlg-cab"><h2>Cómo usar Leonida Atlas</h2><button type="button" class="cerrar" data-cerrar-dlg aria-label="Cerrar">✕</button></header>
+    <ul class="ayuda">
+      <li><b>Filtra</b> por región, categoría y confiabilidad del dato.</li>
+      <li><b>✅ Confirmado</b>: dos o más guías coinciden. <b>📘 1 fuente</b>: lo reporta una guía. <b>❓ Rumor</b>: aún sin comprobar en el juego.</li>
+      <li>Toca un punto para ver el <b>truco paso a paso</b> y el <b>video</b>.</li>
+      <li>Marca lo que ya encontraste con <b>✓</b> y guarda favoritos con <b>★</b> (se queda en tu celular).</li>
+      <li>Con <b>＋ Agregar punto</b> mandas un lugar nuevo o una corrección. Un moderador lo revisa antes de publicarlo.</li>
+      <li>Instálala en tu celular: en Android usa “Instalar app”; en iPhone, Compartir → “Agregar a inicio”.</li>
+    </ul>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="js/config.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/moderation.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/comun.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
