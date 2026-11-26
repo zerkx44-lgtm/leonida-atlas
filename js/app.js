@@ -33,14 +33,6 @@
   };
   map.on('zoomend', escalaPins); escalaPins();
 
-  /* Rótulos de colonias y zonas (aparecen al acercarse) */
-  const rotulos = L.layerGroup().addTo(map);
-  for (const [nombre, [x, y, r]] of Object.entries(ANCLAS)) {
-    if (r > 6) continue;
-    L.marker(aLatLng(x, y), { interactive: false, keyboard: false, zIndexOffset: -1000,
-      icon: L.divIcon({ className: 'rotulo', html: `<span>${esc(nombre)}</span>`, iconSize: [0, 0] }) }).addTo(rotulos);
-  }
-
   function icono(p) {
     const c = CATEGORIAS[p.cat] || { icono: '📍', color: '#999' };
     const clases = ['pin', p.estado === 'rumor' ? 'rumor' : '', p.comunidad ? 'comunidad' : '',

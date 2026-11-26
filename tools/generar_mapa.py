@@ -1,47 +1,51 @@
-"""Genera assets/leonida.svg: mapa ilustrado propio de Leonida (1000 x 1000).
+"""Genera assets/leonida.svg: mapa ilustrado propio de Leonida (1000 x 1394).
 
-La silueta de costa, ríos y lagos (tools/geo/*.txt) se trazó a baja resolución
-a partir de mapas de la comunidad: es solo la forma geográfica. Todo el arte
-(colores, texturas, carreteras, rótulos) es propio.
+Base geográfica: el mapa oficial "Visit Leonida". La costa, islas, lagos, ríos y
+zonas urbanas (tools/geo/*.txt) se trazaron de ese mapa; las carreteras y rótulos
+se colocaron leyendo sus posiciones. El dibujo (colores, texturas, trazos,
+tipografía) es propio: la imagen oficial NO se incluye ni se publica.
+
+Las posiciones de carreteras y rótulos están en píxeles de la imagen oficial
+(1461 x 2000) y se convierten con `c()`.
 Uso:  python3 tools/generar_mapa.py
 """
-import os, re
+import os
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GEO = os.path.join(RAIZ, 'tools', 'geo')
+ANCHO, ALTO = 1000, 1394
 
 
-def leer_poligonos(nombre):
-    txt = open(os.path.join(GEO, nombre)).read().strip()
+def c(px, py):
+    """Píxel del mapa oficial → coordenada del mapa propio."""
+    return round((px - 48) * 1000 / 1364, 1), round((py - 48) * 1000 / 1364, 1)
+
+
+def leer(nombre):
     polis = []
-    for parte in txt.split('M')[1:]:
-        pts = [tuple(map(float, p.split())) for p in parte.rstrip('Z').split('L')]
-        polis.append(pts)
+    for linea in open(os.path.join(GEO, nombre)).read().strip().split('\n'):
+        for parte in linea.split('M')[1:]:
+            polis.append([tuple(map(float, p.split())) for p in parte.rstrip('Z').split('L')])
     return polis
 
 
 def chaikin(pts, it=2):
     for _ in range(it):
-        nuevo = []
         n = len(pts)
+        nuevo = []
         for i in range(n):
             a, b = pts[i], pts[(i + 1) % n]
-            nuevo.append((0.75 * a[0] + 0.25 * b[0], 0.75 * a[1] + 0.25 * b[1]))
-            nuevo.append((0.25 * a[0] + 0.75 * b[0], 0.25 * a[1] + 0.75 * b[1]))
+            nuevo += [(0.75 * a[0] + 0.25 * b[0], 0.75 * a[1] + 0.25 * b[1]), (0.25 * a[0] + 0.75 * b[0], 0.25 * a[1] + 0.75 * b[1])]
         pts = nuevo
     return pts
 
 
 def a_path(polis, it=2):
-    out = []
-    for p in polis:
-        s = chaikin(p, it) if len(p) > 4 else p
-        out.append('M' + 'L'.join(f'{x:.1f} {y:.1f}' for x, y in s) + 'Z')
-    return ''.join(out)
+    return ''.join('M' + 'L'.join(f'{x:.1f} {y:.1f}' for x, y in (chaikin(p, it) if len(p) > 4 else p)) + 'Z' for p in polis)
 
 
-def linea(pts):
-    """Curva suave que pasa por los puntos (Catmull-Rom → Bézier)."""
+def linea(pts_px):
+    pts = [c(*p) for p in pts_px]
     d = f'M{pts[0][0]} {pts[0][1]}'
     for i in range(len(pts) - 1):
         p0 = pts[i - 1] if i > 0 else pts[i]
@@ -53,166 +57,184 @@ def linea(pts):
     return d
 
 
-TIERRA = a_path(leer_poligonos('tierra.txt'))
-AGUA = a_path(leer_poligonos('agua.txt'), 1)
+TIERRA = a_path(leer('tierra.txt'))
+AGUA = a_path(leer('agua.txt'), 1)
+URBANO = a_path(leer('urbano.txt'), 1)
 
-# ── Carreteras (trazado propio aproximado) ──
-AUTOPISTAS = [
-    # Port Gellhorn → Ruta 628 → Ambrosia → Belville → Vice City
-    [(205, 418), (260, 405), (330, 392), (400, 372), (470, 348), (520, 336), (575, 372), (625, 428), (668, 466), (690, 478)],
-    # Port Gellhorn → Mount Kalaga → Ambrosia
-    [(210, 405), (228, 340), (290, 262), (370, 205), (450, 222), (500, 280), (520, 330)],
-    # Vice City → Hamlet → Grassrivers → Capri (costa del Golfo)
-    [(690, 500), (660, 520), (630, 560), (605, 640), (580, 705), (565, 735)],
-    # Ruta 1: Vice City → costa sur → Leonida Keys
-    [(692, 505), (696, 560), (712, 615), (752, 662), (792, 700), (822, 745), (842, 800), (850, 850), (848, 880), (832, 912), (870, 936), (900, 944)],
-]
-SECUNDARIAS = [
-    [(205, 425), (232, 480), (250, 540), (300, 598), (370, 640), (450, 700), (520, 722), (565, 735)],
-    [(690, 478), (712, 420), (722, 340), (712, 250), (700, 160)],
-    [(400, 372), (380, 300), (370, 205)],
-    [(520, 336), (600, 300), (660, 250), (700, 200)],
-    [(668, 466), (650, 490), (645, 528)],
-    [(470, 348), (455, 430), (470, 520), (520, 560), (630, 560)],
-    [(700, 480), (712, 478), (722, 470)],  # puentes a Vice Beach
-    [(700, 498), (722, 495)],
-]
-
-ZONAS_URBANAS = {
-    'vc': 'M655 448 L690 440 L712 452 L716 480 L708 505 L700 540 L680 548 L650 540 L640 520 L645 490 Z',
-    'beach': 'M716 448 L724 446 L728 470 L727 505 L720 508 L716 480 Z',
-    'pg': 'M168 392 L215 380 L262 392 L268 430 L240 448 L195 446 L170 425 Z',
-    'kl': 'M826 846 L858 838 L872 860 L860 890 L832 892 L822 870 Z',
-    'amb': 'M505 322 L535 320 L542 345 L512 352 Z',
-    'hamlet': 'M630 515 L655 512 L660 536 L636 540 Z',
-    'capri': 'M548 726 L582 724 L586 748 L552 750 Z',
-    'watson': 'M292 588 L318 585 L320 606 L296 608 Z',
-    'belville': 'M618 430 L640 428 L642 448 L620 450 Z',
+# ── Carreteras (en píxeles del mapa oficial) ──
+INTERESTATALES = {
+    '404': [(430, 575), (462, 640), (478, 760), (470, 880), (478, 985), (520, 1040), (640, 1046), (731, 1043), (820, 1030), (905, 1018), (985, 1002)],
+    '297': [(430, 575), (520, 550), (610, 545), (700, 527), (780, 522), (830, 533), (900, 497), (962, 470)],
+    '97': [(962, 470), (1030, 540), (1052, 583), (1085, 680), (1093, 760), (1062, 840), (1012, 905), (990, 967), (975, 1050), (962, 1140), (945, 1205), (925, 1265)],
 }
-
-RANCHOS = [  # rótulos (x, y, texto, tamaño, clase)
-    (395, 165, 'MOUNT KALAGA', 19, 'reg'), (395, 182, 'NATIONAL PARK', 8.5, 'sub'),
-    (200, 365, 'PORT GELLHORN', 17, 'reg'),
-    (560, 268, 'AMBROSIA', 19, 'reg'),
-    (470, 610, 'GRASSRIVERS', 19, 'reg'),
-    (775, 418, 'VICE CITY', 21, 'reg'),
-    (800, 965, 'LEONIDA KEYS', 15, 'reg'),
-    (150, 700, 'Golfo de Leonida', 17, 'agua'),
-    (870, 300, 'Océano Atlántico', 17, 'agua'),
-    (560, 880, 'Estrecho de Leonida', 14, 'agua'),
-    (552, 317, 'Lago Leonida', 7.5, 'lago'),
-    # condados y pueblos
-    (395, 196, 'Condado de Lummox', 7.5, 'cond'), (200, 378, 'Condado de Kelly', 7.5, 'cond'),
-    (560, 281, 'Condado de Leonard', 7.5, 'cond'), (775, 430, 'Condado de Vice-Dale', 7.5, 'cond'),
-    (800, 977, 'Condado de Mariana', 7, 'cond'),
-    (845, 868, 'Key Lento', 8, 'pueblo'), (306, 600, 'Watson Bay', 7, 'pueblo'),
-    (566, 740, 'Capri', 7, 'pueblo'), (645, 548, 'Hamlet', 7, 'pueblo'), (630, 425, 'Belville', 7, 'pueblo'),
-    (320, 410, 'Ruta 628', 6, 'ruta'), (578, 87, 'Hyde Island', 6.5, 'pueblo'),
+FEDERALES = {
+    '35': [(850, 470), (812, 587), (800, 700), (803, 789), (800, 900), (803, 1025), (845, 1110), (875, 1240), (899, 1323), (890, 1420), (905, 1535)],
+    '183': [(640, 760), (614, 898), (560, 975), (480, 1050), (460, 1071), (470, 1140), (560, 1215), (650, 1290), (740, 1330), (830, 1350), (899, 1323)],
+}
+ESTATALES = {
+    '1A': [(905, 1535), (880, 1600), (835, 1665), (780, 1720), (720, 1745), (650, 1762), (560, 1748), (470, 1722), (410, 1705)],
+    '1A ': [(899, 1323), (960, 1350), (1012, 1385), (990, 1440), (950, 1500), (905, 1535)],
+    '628': [(520, 430), (606, 447), (700, 418), (780, 362), (856, 337), (935, 330)],
+    '82': [(470, 1140), (586, 1218), (690, 1255), (790, 1300), (850, 1320)],
+    '62': [(470, 800), (516, 825), (650, 812), (760, 805), (859, 812), (960, 790), (1050, 780)],
+    '397': [(962, 1105), (1024, 1113), (1100, 1108), (1180, 1085), (1230, 1060)],
+}
+LOCALES = [
+    [(1062, 840), (1150, 850), (1210, 880), (1235, 920)],      # Decor District → Washington Island
+    [(990, 967), (1060, 975), (1120, 990), (1200, 1000)],      # Crosstown → Vice Beach
+    [(1235, 860), (1250, 960), (1255, 1060), (1240, 1160)],    # Vice Beach (costa)
+    [(1062, 1215), (1100, 1235), (1160, 1250)],                # Tequesta → Gloriana Key
+    [(470, 1140), (440, 1215), (480, 1290), (560, 1340), (620, 1400)],  # costa del golfo → Watson Bay
+    [(812, 587), (860, 470), (930, 430)],
+    [(640, 1046), (650, 1110), (690, 1180)],
+    [(700, 527), (680, 610), (700, 680), (760, 720), (800, 700)],
 ]
 
-svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="2000" height="2000">
+# ── Rótulos (px oficiales) ──
+CONDADOS = [(727, 403, 'LUMMOX COUNTY'), (619, 792, 'KELLY COUNTY'), (1022, 718, 'LEONARD COUNTY'),
+            (1055, 1148, 'VICE-DALE COUNTY'), (601, 1462, 'MARIANA COUNTY')]
+CIUDADES = [(447, 715, 'PORT GELLHORN', 17), (978, 1040, 'VICE CITY', 19), (1245, 978, 'VICE BEACH', 15), (817, 1371, 'HAMLET', 14),
+            (826, 1140, 'VCIA', 15), (811, 714, 'Ambrosia', 11), (961, 792, 'Belville', 10), (420, 1055, 'Capri', 11),
+            (631, 1405, 'Watson Bay', 10), (831, 1666, 'Key Lento', 11), (658, 1326, 'Grassrivers', 11), (359, 599, 'Draper Island', 10),
+            (403, 1738, 'Mile Zero Air Station', 9.5), (478, 1710, 'Southwind', 9.5), (703, 283, 'Bonanza', 10), (555, 436, 'Grayson', 10),
+            (963, 460, 'Millport', 10), (1080, 646, 'Waning Sands', 10)]
+LUGARES = [  # rótulos pequeños
+    (839, 230, 'Hyde Island'), (772, 262, 'Saint Attaway Islands'), (555, 313, 'Featherstone Islands'), (940, 292, 'Frampton Islands'),
+    (754, 331, 'Moreau'), (931, 354, 'East Lummox County'), (727, 452, 'Mount Kalaga National Park'), (874, 505, 'North Leonard County'),
+    (1132, 497, 'Little Hardin Island'), (1046, 530, 'Richard Barebone State Park'), (365, 510, 'Zephyr Islands'), (718, 560, 'North Kelly County'),
+    (569, 590, 'Manifest Canyon'), (884, 627, 'Lake Leonida'), (1154, 670, 'Vinewood Beach'), (648, 688, 'Frogswater'),
+    (360, 779, 'Wild Hog Point'), (207, 810, 'Sandbars'), (1132, 835, 'Leaf Links'), (672, 840, 'Emerald Springs'),
+    (888, 866, 'South Leonard County'), (1061, 866, 'Decor District'), (1213, 866, 'Washington Island'), (275, 874, 'Crude Islands'),
+    (437, 872, 'Gellhorn Raceway'), (514, 894, 'Gellhorn'), (701, 946, 'Buckskin Swamp'), (993, 929, 'La Perle'), (1121, 935, 'Rialto Islands'),
+    (1050, 944, 'Bayside'), (953, 996, 'Rockridge'), (1020, 993, 'Crosstown'), (856, 999, 'Balsero'), (576, 1011, 'South Kelly County'),
+    (965, 1066, 'Little Cuba'), (1025, 1068, 'Downtown'), (908, 1081, 'Salton'), (1260, 1045, 'Ocean Beach'), (256, 1098, 'Belpoint'),
+    (1176, 1112, 'Port Vice City'), (984, 1190, 'Tequesta'), (1065, 1185, 'Tequesta Retreat'), (632, 1166, 'Breakwater Quarry'),
+    (1264, 1190, 'Dalton Island'), (575, 1246, 'Big Pine'), (1166, 1250, 'Gloriana Key'), (819, 1266, 'Bluegrass'), (970, 1278, 'Peacock Bay'),
+    (480, 1285, 'Bobcat Key'), (1061, 1285, 'Catalan Key'), (912, 1300, 'Southside'), (903, 1362, 'South Vice-Dale'), (986, 1478, 'Corsair Key'),
+    (761, 1466, 'Pelican Valley'), (884, 1518, 'Shoeless Keys'), (318, 1659, 'Riquezas Keys'), (532, 1688, 'Permit Keys'),
+    (657, 1722, 'Maroon Key'), (657, 1786, 'Abismo Key'), (650, 1072, 'West Vice-Dale County'), (1148, 1027, 'Starfish Island'),
+    (1132, 974, 'Vespucci Island'), (1163, 947, 'Casanova Island'), (1093, 963, 'Catalan Island'), (1127, 1066, 'Waxman Island'),
+    (1221, 912, 'Oldby Island'), (1167, 885, 'Penmarch Isle'), (743, 1534, 'Cottonmouth Lake'),
+]
+AGUAS = [(1277, 637, 'Atlantic Ocean', 17), (190, 1278, 'Gulf Of Leonida', 17), (435, 1878, 'Leonida Straits', 12), (637, 257, 'Okchiloha Bay', 8),
+         (920, 232, 'Partridge Bay', 8), (480, 427, 'San Malo Bay', 8), (1083, 453, 'Millport Basin', 8), (370, 688, 'Draper Bay', 8),
+         (330, 820, 'Borrachero Sound', 8), (317, 1013, 'Capri Sound', 8), (404, 1185, 'Bobcat Bight', 8), (1215, 1153, 'Catalan Bay', 8),
+         (550, 1520, 'Leonida Bay', 8), (821, 1574, 'Gambit Bay', 7), (937, 1472, 'Peregrine Bay', 7), (556, 1108, 'Nehrling River', 7)]
+
+
+def escudo(px, py, num, tipo):
+    x, y = c(px, py)
+    if tipo == 'i':
+        return (f'<g transform="translate({x} {y})"><path d="M-6 -6 H6 V1 Q6 6 0 8 Q-6 6 -6 1 Z" fill="#2f5fb3" stroke="#fff" stroke-width="0.9"/>'
+                f'<rect x="-6" y="-6" width="12" height="3" fill="#c8323c"/><text y="4" font-size="5.2" font-weight="800" fill="#fff" text-anchor="middle">{num}</text></g>')
+    if tipo == 'f':
+        return (f'<g transform="translate({x} {y})"><path d="M-5.5 -6 H5.5 Q6 2 0 7 Q-6 2 -5.5 -6 Z" fill="#fff" stroke="#222" stroke-width="0.8"/>'
+                f'<text y="2.4" font-size="5" font-weight="800" fill="#111" text-anchor="middle">{num}</text></g>')
+    return (f'<g transform="translate({x} {y})"><rect x="-6" y="-5" width="12" height="10" rx="2" fill="#fff" stroke="#222" stroke-width="0.8"/>'
+            f'<text y="2.2" font-size="5" font-weight="800" fill="#111" text-anchor="middle">{num.strip()}</text></g>')
+
+
+ESCUDOS = [(479, 757, '404', 'i'), (478, 987, '404', 'i'), (731, 1043, '404', 'i'), (610, 545, '297', 'i'), (830, 533, '297', 'i'),
+           (1052, 583, '97', 'i'), (1093, 760, '97', 'i'), (990, 967, '97', 'i'), (945, 1205, '97', 'i'), (812, 587, '35', 'f'),
+           (803, 789, '35', 'f'), (803, 1025, '35', 'f'), (899, 1323, '35', 'f'), (614, 898, '183', 'f'), (460, 1071, '183', 'f'),
+           (586, 1218, '82', 'e'), (606, 447, '628', 'e'), (856, 337, '628', 'e'), (516, 825, '62', 'e'), (859, 812, '62', 'e'),
+           (1024, 1113, '397', 'e'), (1012, 1385, '1A', 'e'), (908, 1555, '1A', 'e'), (720, 1745, '1A', 'e'), (550, 1745, '1A', 'e')]
+
+
+def texto(px, py, t, tam, clase):
+    x, y = c(px, py)
+    return f'<text x="{x}" y="{y}" class="{clase}" font-size="{tam}">{t}</text>'
+
+
+svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {ANCHO} {ALTO}" width="{ANCHO * 2}" height="{ALTO * 2}">
 <defs>
-  <radialGradient id="oceano" cx="0.55" cy="0.45" r="0.75">
-    <stop offset="0" stop-color="#1f5f86"/><stop offset="0.6" stop-color="#174a6b"/><stop offset="1" stop-color="#0d2f47"/>
+  <radialGradient id="oceano" cx="0.5" cy="0.45" r="0.8">
+    <stop offset="0" stop-color="#12b5d0"/><stop offset="0.7" stop-color="#05a6c6"/><stop offset="1" stop-color="#028fb0"/>
   </radialGradient>
-  <linearGradient id="tierraBase" x1="0" y1="0" x2="0.3" y2="1">
-    <stop offset="0" stop-color="#5f7d52"/><stop offset="0.45" stop-color="#7a9160"/><stop offset="0.75" stop-color="#8f9a6a"/><stop offset="1" stop-color="#a7a57a"/>
+  <linearGradient id="verde" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#3f7c63"/><stop offset="0.45" stop-color="#4f8c6e"/><stop offset="0.8" stop-color="#5a9474"/><stop offset="1" stop-color="#6a9c79"/>
   </linearGradient>
-  <radialGradient id="monte" cx="0.5" cy="0.5" r="0.5">
-    <stop offset="0" stop-color="#2d4a2c" stop-opacity="0.95"/><stop offset="1" stop-color="#2d4a2c" stop-opacity="0"/>
+  <radialGradient id="relieve" cx="0.5" cy="0.5" r="0.5">
+    <stop offset="0" stop-color="#21493a" stop-opacity="0.85"/><stop offset="1" stop-color="#21493a" stop-opacity="0"/>
   </radialGradient>
-  <radialGradient id="cumbre" cx="0.5" cy="0.5" r="0.5">
-    <stop offset="0" stop-color="#9c9480"/><stop offset="1" stop-color="#9c9480" stop-opacity="0"/>
+  <radialGradient id="luz" cx="0.5" cy="0.5" r="0.5">
+    <stop offset="0" stop-color="#cfe6d4" stop-opacity="0.45"/><stop offset="1" stop-color="#cfe6d4" stop-opacity="0"/>
   </radialGradient>
-  <radialGradient id="humedal" cx="0.5" cy="0.5" r="0.5">
-    <stop offset="0" stop-color="#4f6b3f" stop-opacity="0.9"/><stop offset="1" stop-color="#4f6b3f" stop-opacity="0"/>
+  <radialGradient id="pantano" cx="0.5" cy="0.5" r="0.5">
+    <stop offset="0" stop-color="#6f9a6a" stop-opacity="0.75"/><stop offset="1" stop-color="#6f9a6a" stop-opacity="0"/>
   </radialGradient>
-  <radialGradient id="arena" cx="0.5" cy="0.5" r="0.5">
-    <stop offset="0" stop-color="#c8bd8a" stop-opacity="0.8"/><stop offset="1" stop-color="#c8bd8a" stop-opacity="0"/>
-  </radialGradient>
-  <pattern id="pastos" width="6" height="6" patternUnits="userSpaceOnUse">
-    <path d="M1 5 l1 -2 M4 2 l1 -2" stroke="#3e5a35" stroke-width="0.45" opacity="0.7"/>
+  <pattern id="calles" width="3" height="3" patternUnits="userSpaceOnUse">
+    <rect width="3" height="3" fill="#aab2ba"/><rect x="0.35" y="0.35" width="2.3" height="2.3" fill="#c3c9cf"/>
   </pattern>
-  <pattern id="cultivo" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(28)">
-    <rect width="3.5" height="7" fill="#a9b26c"/><rect x="3.5" width="3.5" height="7" fill="#93a35d"/>
+  <pattern id="cultivo" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(90)">
+    <rect width="2.5" height="5" fill="#7fa77d"/><rect x="2.5" width="2.5" height="5" fill="#6c9a72"/>
   </pattern>
-  <pattern id="bosque" width="5" height="5" patternUnits="userSpaceOnUse">
-    <circle cx="1.5" cy="1.5" r="1.3" fill="#24401f" opacity="0.55"/><circle cx="4" cy="3.8" r="1.1" fill="#3b5e30" opacity="0.6"/>
+  <pattern id="arboles" width="4" height="4" patternUnits="userSpaceOnUse">
+    <circle cx="1" cy="1" r="0.9" fill="#2c5a45" opacity="0.5"/><circle cx="3" cy="3" r="0.8" fill="#3c6e55" opacity="0.5"/>
   </pattern>
-  <pattern id="calles" width="3.2" height="3.2" patternUnits="userSpaceOnUse">
-    <rect width="3.2" height="3.2" fill="#8d8f8d"/><rect x="0.35" y="0.35" width="2.5" height="2.5" fill="#b9b6ac"/>
-  </pattern>
-  <clipPath id="recorteTierra"><path d="{TIERRA}"/></clipPath>
-  <filter id="difuso" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="6"/></filter>
-  <filter id="sombraTxt"><feDropShadow dx="0" dy="0.6" stdDeviation="0.8" flood-color="#000" flood-opacity="0.85"/></filter>
+  <clipPath id="recorte"><path d="{TIERRA}"/></clipPath>
+  <filter id="difuso" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="9"/></filter>
+  <filter id="sombra"><feDropShadow dx="0" dy="0.5" stdDeviation="0.7" flood-color="#0b2430" flood-opacity="0.9"/></filter>
+  <style>
+    text {{ font-family: 'Arial Narrow', 'Roboto Condensed', 'Helvetica Neue', Arial, sans-serif; text-anchor: middle; }}
+    .cond {{ font-weight: 800; fill: #fff; letter-spacing: 0.5px; filter: url(#sombra); }}
+    .ciu {{ font-weight: 800; fill: #fff; filter: url(#sombra); }}
+    .lug {{ font-weight: 700; fill: #fff; filter: url(#sombra); }}
+    .agua {{ font-family: Georgia, serif; font-style: italic; fill: #0a5d74; }}
+  </style>
 </defs>
 
-<rect width="1000" height="1000" fill="url(#oceano)"/>
-<!-- aguas someras -->
-<path d="{TIERRA}" fill="none" stroke="#3ea3b5" stroke-width="34" stroke-opacity="0.22" filter="url(#difuso)"/>
-<path d="{TIERRA}" fill="none" stroke="#5cc4c9" stroke-width="12" stroke-opacity="0.28" filter="url(#difuso)"/>
-<ellipse cx="840" cy="915" rx="90" ry="40" fill="#4cc0c2" opacity="0.18" filter="url(#difuso)"/>
+<rect width="{ANCHO}" height="{ALTO}" fill="url(#oceano)"/>
+<!-- aguas someras alrededor de la costa -->
+<path d="{TIERRA}" fill="none" stroke="#7fe0ea" stroke-width="44" stroke-opacity="0.22" filter="url(#difuso)"/>
+<path d="{TIERRA}" fill="none" stroke="#a6eef2" stroke-width="14" stroke-opacity="0.35" filter="url(#difuso)"/>
 <!-- tierra -->
-<path d="{TIERRA}" fill="#dccc95" stroke="#e9dcab" stroke-width="2.4" stroke-linejoin="round"/>
-<g clip-path="url(#recorteTierra)">
-  <rect width="1000" height="1000" fill="url(#tierraBase)" transform="translate(0 0)"/>
-  <path d="{TIERRA}" fill="none" stroke="#d9c98f" stroke-width="2.2"/>
-  <!-- Mount Kalaga: bosque y relieve -->
-  <ellipse cx="380" cy="190" rx="300" ry="130" fill="url(#monte)"/>
-  <ellipse cx="380" cy="190" rx="290" ry="120" fill="url(#bosque)" opacity="0.8"/>
-  <ellipse cx="405" cy="150" rx="70" ry="40" fill="url(#cumbre)" opacity="0.75"/>
-  <ellipse cx="330" cy="200" rx="50" ry="28" fill="url(#cumbre)" opacity="0.5"/>
-  <g fill="none" stroke="#2a3f27" stroke-width="0.9" opacity="0.55" stroke-linecap="round">
-    <path d="M340 150 Q380 120 440 140 T520 150"/><path d="M300 185 Q350 160 400 178 T480 172"/>
-    <path d="M250 215 Q300 200 350 215"/><path d="M420 200 Q460 190 500 205"/><path d="M360 125 Q400 105 450 118"/>
-  </g>
-  <!-- Ambrosia: cañaverales -->
-  <ellipse cx="555" cy="335" rx="95" ry="70" fill="url(#cultivo)" opacity="0.55"/>
-  <!-- Grassrivers: humedal -->
-  <ellipse cx="480" cy="540" rx="210" ry="150" fill="url(#humedal)"/>
-  <ellipse cx="480" cy="540" rx="200" ry="140" fill="url(#pastos)" opacity="0.9"/>
-  <ellipse cx="640" cy="680" rx="90" ry="70" fill="url(#humedal)" opacity="0.7"/>
-  <!-- cola sur y Cayos: arena -->
-  <ellipse cx="800" cy="820" rx="120" ry="90" fill="url(#arena)"/>
+<path d="{TIERRA}" fill="#e6dcbd" stroke="#efe6ca" stroke-width="2.2" stroke-linejoin="round"/>
+<g clip-path="url(#recorte)">
+  <rect width="{ANCHO}" height="{ALTO}" fill="url(#verde)"/>
+  <path d="{TIERRA}" fill="none" stroke="#e3d6ae" stroke-width="2.4"/>
+  <!-- Mount Kalaga: relieve -->
+  <ellipse cx="{c(700, 470)[0]}" cy="{c(700, 470)[1]}" rx="240" ry="150" fill="url(#relieve)"/>
+  <ellipse cx="{c(700, 470)[0]}" cy="{c(700, 470)[1]}" rx="230" ry="140" fill="url(#arboles)"/>
+  <ellipse cx="{c(690, 430)[0]}" cy="{c(690, 430)[1]}" rx="120" ry="55" fill="url(#luz)" opacity="0.5"/>
+  <ellipse cx="{c(560, 760)[0]}" cy="{c(560, 760)[1]}" rx="110" ry="140" fill="url(#relieve)" opacity="0.5"/>
+  <!-- Ambrosia y Leonard: cultivos -->
+  <ellipse cx="{c(900, 860)[0]}" cy="{c(900, 860)[1]}" rx="90" ry="45" fill="url(#cultivo)" opacity="0.45"/>
+  <ellipse cx="{c(760, 760)[0]}" cy="{c(760, 760)[1]}" rx="60" ry="40" fill="url(#cultivo)" opacity="0.35"/>
+  <!-- Grassrivers y Buckskin: humedales -->
+  <ellipse cx="{c(650, 1380)[0]}" cy="{c(650, 1380)[1]}" rx="150" ry="140" fill="url(#pantano)"/>
+  <ellipse cx="{c(700, 940)[0]}" cy="{c(700, 940)[1]}" rx="70" ry="50" fill="url(#pantano)"/>
+  <ellipse cx="{c(640, 1190)[0]}" cy="{c(640, 1190)[1]}" rx="90" ry="60" fill="url(#cultivo)" opacity="0.3"/>
 </g>
-<!-- ríos y lagos -->
-<path d="{AGUA}" fill="#2e7799" stroke="#8fd2de" stroke-width="0.6" stroke-opacity="0.7"/>
-<!-- zonas urbanas -->
-<g clip-path="url(#recorteTierra)" opacity="0.95">
-  {''.join(f'<path d="{d}" fill="url(#calles)"/>' for d in ZONAS_URBANAS.values())}
-</g>
+<!-- ciudades -->
+<path d="{URBANO}" fill="url(#calles)" clip-path="url(#recorte)"/>
+<!-- lagos, ríos y bahías interiores -->
+<path d="{AGUA}" fill="#4cc2d6" stroke="#9fe6ee" stroke-width="0.6"/>
 <!-- carreteras -->
 <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-  {''.join(f'<path d="{linea(r)}" stroke="#5b4a2a" stroke-width="1.6" opacity="0.5"/>' for r in SECUNDARIAS)}
-  {''.join(f'<path d="{linea(r)}" stroke="#f3ead0" stroke-width="1"/>' for r in SECUNDARIAS)}
-  {''.join(f'<path d="{linea(r)}" stroke="#4a3412" stroke-width="3.4" opacity="0.6"/>' for r in AUTOPISTAS)}
-  {''.join(f'<path d="{linea(r)}" stroke="#f4b33d" stroke-width="2.2"/>' for r in AUTOPISTAS)}
+  {''.join(f'<path d="{linea(r)}" stroke="#fff" stroke-width="0.8" stroke-opacity="0.85"/>' for r in LOCALES)}
+  {''.join(f'<path d="{linea(r)}" stroke="#556" stroke-width="2.6" stroke-opacity="0.35"/><path d="{linea(r)}" stroke="#fff" stroke-width="1.4"/>' for r in ESTATALES.values())}
+  {''.join(f'<path d="{linea(r)}" stroke="#556" stroke-width="3.2" stroke-opacity="0.4"/><path d="{linea(r)}" stroke="#fff" stroke-width="1.9"/>' for r in FEDERALES.values())}
+  {''.join(f'<path d="{linea(r)}" stroke="#445" stroke-width="3.8" stroke-opacity="0.45"/><path d="{linea(r)}" stroke="#fff" stroke-width="2.4"/>' for r in INTERESTATALES.values())}
 </g>
-<!-- rótulos -->
-<g font-family="'Arial Narrow', 'Helvetica Neue', Arial, sans-serif" text-anchor="middle" filter="url(#sombraTxt)">
-'''
-for x, y, t, s, c in RANCHOS:
-    if c == 'reg':
-        svg += f'  <text x="{x}" y="{y}" font-size="{s}" font-weight="800" letter-spacing="{s*0.18:.1f}" fill="#ffffff">{t}</text>\n'
-    elif c == 'sub':
-        svg += f'  <text x="{x}" y="{y}" font-size="{s}" font-weight="700" letter-spacing="2" fill="#e9f2e6">{t}</text>\n'
-    elif c == 'agua':
-        svg += f'  <text x="{x}" y="{y}" font-size="{s}" font-style="italic" font-family="Georgia, serif" fill="#9fd6e6" opacity="0.85" filter="none">{t}</text>\n'
-    elif c == 'lago':
-        svg += f'  <text x="{x}" y="{y}" font-size="{s}" font-style="italic" font-family="Georgia, serif" fill="#d7f1f7">{t}</text>\n'
-    elif c == 'cond':
-        svg += f'  <text x="{x}" y="{y}" font-size="{s}" font-weight="600" letter-spacing="1" fill="#f1e9c9" opacity="0.9">{t.upper()}</text>\n'
-    elif c == 'ruta':
-        svg += f'  <text x="{x}" y="{y}" font-size="{s}" font-weight="700" fill="#ffe4a3">{t}</text>\n'
-    else:
-        svg += f'  <text x="{x}" y="{y}" font-size="{s}" font-weight="700" fill="#ffffff">{t}</text>\n'
-svg += '''</g>
-<g transform="translate(90 900)" opacity="0.9">
-  <circle r="26" fill="none" stroke="#9fd6e6" stroke-width="1.2"/>
-  <path d="M0 -23 L5 0 L0 23 L-5 0 Z" fill="#fff"/><path d="M-23 0 L0 5 L23 0 L0 -5 Z" fill="#9fd6e6"/>
-  <text y="-31" font-family="Arial" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">N</text>
+<!-- pistas del aeropuerto VCIA -->
+<g stroke="#fff" stroke-width="2.2" stroke-linecap="round">
+  <path d="M{c(735, 1097)[0]} {c(735, 1097)[1]} L{c(880, 1097)[0]} {c(880, 1097)[1]}"/><path d="M{c(740, 1110)[0]} {c(740, 1110)[1]} L{c(880, 1110)[0]} {c(880, 1110)[1]}"/>
+  <path d="M{c(735, 1130)[0]} {c(735, 1130)[1]} L{c(870, 1212)[0]} {c(870, 1212)[1]}"/>
 </g>
-<text x="992" y="994" font-family="Arial" font-size="7" fill="#9fd6e6" text-anchor="end">Mapa ilustrado por fans · no oficial · posiciones aproximadas</text>
+<g>{''.join(escudo(*e) for e in ESCUDOS)}</g>
+<g>
+  {''.join(texto(px, py, t, s, 'agua') for px, py, t, s in AGUAS)}
+  {''.join(texto(px, py, t, 6, 'lug') for px, py, t in LUGARES)}
+  {''.join(texto(px, py, t, s, 'ciu') for px, py, t, s in CIUDADES)}
+  {''.join(texto(px, py, t, 20, 'cond') for px, py, t in CONDADOS)}
+</g>
+<g transform="translate({c(245, 1405)[0]} {c(245, 1405)[1]})" opacity="0.85">
+  <circle r="24" fill="none" stroke="#0a5d74" stroke-width="1"/>
+  <path d="M0 -26 L5 0 L0 26 L-5 0 Z" fill="#0a5d74"/><path d="M-26 0 L0 5 L26 0 L0 -5 Z" fill="#2a8aa3"/>
+  <text y="-30" font-size="9" font-weight="800" fill="#0a5d74">N</text>
+</g>
+<text x="{ANCHO - 8}" y="{ALTO - 8}" font-size="7" fill="#0a5d74" style="text-anchor:end">Mapa ilustrado por fans · basado en el mapa oficial de Leonida · no oficial</text>
 </svg>
 '''
 open(os.path.join(RAIZ, 'assets', 'leonida.svg'), 'w').write(svg)

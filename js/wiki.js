@@ -9,25 +9,40 @@
   const COLORES = ['#f43f5e', '#f97316', '#eab308', '#22c55e', '#14b8a6', '#0ea5e9', '#6366f1', '#a855f7', '#ec4899', '#84cc16'];
   const colorDe = s => COLORES[[...s].reduce((a, c) => a + c.charCodeAt(0), 0) % COLORES.length];
   const iniciales = n => n.replace(/["'(].*?["')]/g, '').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+  /* Avatar: usa `foto` si se definió (imagen propia o con permiso); si no, iniciales. */
+  const avatar = (p, grande) => {
+    const ini = `<span class="avatar${grande ? ' grande' : ''}" style="--c:${colorDe(p.id)}">${esc(iniciales(p.nombre))}</span>`;
+    const u = p.foto && urlSegura(p.foto);
+    return u ? `<img class="avatar foto${grande ? ' grande' : ''}" src="${esc(u)}" alt="" loading="lazy" onerror="this.outerHTML=this.dataset.f" data-f='${ini.replace(/'/g, '&#39;')}'>` : ini;
+  };
+  const buscarImagenes = p => `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(p.nombre.replace(/\(.*?\)/g, '') + ' GTA 6')}`;
 
   /* ───── Definición de cada pestaña ───── */
   const TABS = {
     personajes: {
-      datos: PERSONAJES,
+      datos: PERSONAJES.filter(p => !p.spoiler),
       texto: p => `${p.nombre} ${p.desc} ${p.juego || ''} ${p.aparece || ''} ${p.voz || ''} ${p.region} ${GRUPOS_PERSONAJES[p.grupo]}`,
       filtros: [{ id: 'grupo', nombre: 'Grupo', opciones: GRUPOS_PERSONAJES, campo: p => p.grupo }],
       tarjeta: p => `
-        <span class="avatar" style="--c:${colorDe(p.id)}">${esc(iniciales(p.nombre))}</span>
+        ${avatar(p)}
         <span class="t-cuerpo"><b>${esc(p.nombre)}</b>
           <small>${esc(GRUPOS_PERSONAJES[p.grupo])} · ${esc(p.region)}</small>
-          <small class="t-desc">${esc(p.desc)}</small></span>
-        ${p.spoiler ? '<span class="sello">Spoiler</span>' : ''}`,
+          <small class="t-desc">${esc(p.desc)}</small></span>`,
       ficha: p => `
-        <div class="f-cab"><span class="avatar grande" style="--c:${colorDe(p.id)}">${esc(iniciales(p.nombre))}</span>
+        <div class="f-cab">${avatar(p, true)}
           <div><h2>${esc(p.nombre)}</h2><p class="tenue">${esc(GRUPOS_PERSONAJES[p.grupo])} · ${esc(p.region)}</p></div></div>
         <p class="desc">${esc(p.desc)}</p>
         ${dato('🎮 En el juego', p.juego)}${dato('📍 Aparece en', p.aparece)}${dato('🎙️ Voz', p.voz)}
-        ${p.spoiler ? `<details class="spoiler"><summary>⚠ Mostrar spoiler</summary><p>${esc(p.spoiler)}</p></details>` : ''}`,
+        ${p.spoiler ? `<div class="spoiler"><b>⚠ Spoiler:</b> ${esc(p.spoiler)}</div>` : ''}
+        <p><a class="btn ghost" href="${esc(buscarImagenes(p))}" target="_blank" rel="noopener noreferrer">🔍 Ver imágenes de ${esc(p.nombre.split(' ')[0])} en internet ↗</a></p>`,
+    },
+    spoilers: {
+      confirmar: 'Esta sección revela partes de la historia (quién muere, regresos sorpresa, etc.). ¿Quieres verla?',
+      datos: PERSONAJES.filter(p => p.spoiler),
+      texto: p => `${p.nombre} ${p.desc} ${p.spoiler}`, filtros: [],
+      tarjeta: p => `${avatar(p)}<span class="t-cuerpo"><b>${esc(p.nombre)}</b><small>${esc(GRUPOS_PERSONAJES[p.grupo])}</small>
+        <small class="t-desc">${esc(p.desc)}</small></span><span class="sello">Spoiler</span>`,
+      ficha: p => null,
     },
     animales: {
       datos: ANIMALES,
@@ -80,6 +95,9 @@
   };
 
   const dato = (t, v) => (v ? `<p class="dato"><b>${esc(t)}:</b> ${esc(v)}</p>` : '');
+
+  TABS.spoilers.ficha = p => TABS.personajes.ficha(p);
+  let spoilersOk = sessionStorage.getItem('atlas_spoilers') === '1';
 
   /* ───── Render ───── */
   function pintarFiltros() {
@@ -135,6 +153,10 @@
   }
 
   function cambiarTab(tab) {
+    if (TABS[tab].confirmar && !spoilersOk) {
+      if (!confirm(TABS[tab].confirmar)) return;
+      spoilersOk = true; sessionStorage.setItem('atlas_spoilers', '1');
+    }
     estado.tab = tab; estado.f = {};
     pintarFiltros(); pintar();
     history.replaceState(null, '', `#${tab}`);
@@ -164,7 +186,8 @@
   for (const k of Object.keys(TABS)) $('#n-' + k).textContent = TABS[k].datos.length;
   function desdeHash() {
     const [tabHash, idHash] = decodeURIComponent(location.hash.slice(1)).split('/');
-    const tab = TABS[tabHash] ? tabHash : 'personajes';
+    let tab = TABS[tabHash] ? tabHash : 'personajes';
+    if (TABS[tab].confirmar && !spoilersOk) tab = 'personajes';
     if (tab !== estado.tab || !$('#grid').children.length) { estado.tab = tab; estado.f = {}; pintarFiltros(); pintar(); }
     if (idHash) abrir(idHash);
   }

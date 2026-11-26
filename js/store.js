@@ -105,5 +105,8 @@ const Store = (() => {
     await sb(`aportes?id=eq.${encodeURIComponent(id)}`, { method: 'DELETE' }, sesion().token);
   }
 
-  return { MODO, listarAprobados, enviar, login, logout, haySesion, listar, actualizar, eliminar, sesion };
+  /* Llamada directa a la API con la sesión del moderador (chat). */
+  const api = (path, opts = {}) => sb(path, opts, sesion()?.token);
+
+  return { MODO, listarAprobados, enviar, login, logout, haySesion, listar, actualizar, eliminar, sesion, api };
 })();

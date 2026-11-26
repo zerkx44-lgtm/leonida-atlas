@@ -9,8 +9,9 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="assets/icon-192.png">
-  <link rel="stylesheet" href="css/app.css?v=3">
-  <link rel="stylesheet" href="css/wiki.css?v=3">
+  <link rel="stylesheet" href="css/app.css?v=5">
+  <link rel="stylesheet" href="css/chat.css?v=5">
+  <link rel="stylesheet" href="css/wiki.css?v=5">
 </head>
 <body class="wiki">
   <header class="topbar">
@@ -32,6 +33,7 @@
       <button role="tab" data-tab="personajes">👤 Personajes <em id="n-personajes"></em></button>
       <button role="tab" data-tab="animales">🐾 Animales <em id="n-animales"></em></button>
       <button role="tab" data-tab="vehiculos">🚗 Vehículos <em id="n-vehiculos"></em></button>
+      <button role="tab" data-tab="spoilers" class="tab-spoiler">⚠ Spoilers <em id="n-spoilers"></em></button>
     </nav>
 
     <section id="filtros" class="filtros-wiki"></section>
@@ -49,10 +51,12 @@
     <div id="ficha-contenido"></div>
   </dialog>
 
-  <script src="js/config.js?v=3"></script>
-  <script src="js/data.js?v=3"></script>
-  <script src="js/wiki-data.js?v=3"></script>
-  <script src="js/comun.js?v=3"></script>
-  <script src="js/wiki.js?v=3"></script>
+  <script src="js/config.js?v=5"></script>
+  <script src="js/data.js?v=5"></script>
+  <script src="js/wiki-data.js?v=5"></script>
+  <script src="js/moderation.js?v=5"></script>
+  <script src="js/comun.js?v=5"></script>
+  <script src="js/wiki.js?v=5"></script>
+  <script src="js/chat.js?v=5"></script>
 </body>
 </html>

@@ -45,7 +45,10 @@ body.wiki { overflow: auto; }
 .f-cab p { margin: 4px 0 0; }
 .ficha-wiki .desc { font-size: 15px; line-height: 1.55; }
 .ficha-wiki .dato { font-size: 14px; margin: 6px 0; line-height: 1.5; }
-.spoiler { margin: 12px 0; background: #2a1420; border: 1px dashed var(--rosa); border-radius: 10px; padding: 8px 12px; }
+.spoiler { margin: 12px 0; background: #2a1420; border: 1px dashed var(--rosa); border-radius: 10px; padding: 8px 12px; font-size: 14px; line-height: 1.5; }
+.tabs-wiki .tab-spoiler { border-style: dashed; color: #ffb3c8; }
+.tabs-wiki .tab-spoiler.on { border-color: #ff6b9a; }
+img.avatar { object-fit: cover; padding: 0; background: var(--panel-2); }
 .spoiler summary { cursor: pointer; font-weight: 700; color: #ffb3c8; }
 .aviso-f { background: #4c0d1f; border-radius: 8px; padding: 8px 10px; font-size: 13px; }
 .aviso-f.gris { background: #33404d; }

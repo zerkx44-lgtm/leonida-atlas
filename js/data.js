@@ -20,44 +20,55 @@ const FUENTES = {
 
 const REGIONES = ['Vice City', 'Leonida Keys', 'Grassrivers', 'Port Gellhorn', 'Ambrosia', 'Mount Kalaga'];
 
-/* Zonas del mapa: [x, y, radio de dispersión, región]. Posiciones aproximadas. */
-const ANCLAS = {
-  // Vice City (condado de Vice-Dale)
-  'Downtown': [694, 494, 3, 'Vice City'], 'Bayside': [697, 486, 3, 'Vice City'], 'Tequesta': [692, 503, 3, 'Vice City'],
-  'Tequesta Retreat': [698, 511, 2.5, 'Vice City'], 'Crosstown': [684, 489, 3, 'Vice City'], 'Little Cuba': [676, 499, 3, 'Vice City'],
-  'La Perle': [683, 475, 3, 'Vice City'], 'Little Haiti': [679, 467, 3, 'Vice City'], 'Stockyard': [688, 481, 2.5, 'Vice City'],
-  'Decor District': [690, 471, 2.5, 'Vice City'], 'Salton': [671, 484, 3, 'Vice City'], 'Southside': [668, 516, 4, 'Vice City'],
-  'Rockridge': [670, 506, 3, 'Vice City'], 'Balsero': [662, 476, 3, 'Vice City'], 'VCIA': [655, 492, 4, 'Vice City'],
-  'Griffin': [660, 462, 3, 'Vice City'], 'Peacock Bay': [686, 522, 3, 'Vice City'], 'Peacock Estates': [691, 529, 2.5, 'Vice City'],
-  'Shoreline': [700, 492, 2, 'Vice City'], 'Hamlet': [645, 528, 5, 'Vice City'], 'Capri': [566, 736, 6, 'Grassrivers'],
-  'Waning Sands': [703, 450, 4, 'Vice City'], 'Vinewood Beach': [716, 447, 3, 'Vice City'], 'Leaf Links': [709, 460, 3, 'Vice City'],
-  'Belville': [630, 440, 5, 'Vice City'], 'Peregrine Bay': [680, 548, 4, 'Vice City'],
-  'Port Vice City': [708, 500, 2, 'Vice City'], 'Rialto Islands': [708, 480, 3, 'Vice City'], 'Vespucci Island': [706, 476, 2, 'Vice City'],
-  'Starfish Island': [711, 487, 2, 'Vice City'], 'Salton Memorial Island': [711, 483, 1.5, 'Vice City'], 'Casanova Island': [707, 470, 2, 'Vice City'],
-  'Penmarch Isle': [705, 466, 2, 'Vice City'], 'Neptune Circle': [712, 478, 2, 'Vice City'],
-  'Vice Beach': [722, 482, 3, 'Vice City'], 'Washington Beach': [721, 470, 3, 'Vice City'], 'Ocean Beach': [722, 495, 3, 'Vice City'],
-  'Catalan Key': [712, 528, 3, 'Vice City'], 'Gloriana Key': [710, 516, 3, 'Vice City'],
-  // Leonida Keys (condado de Mariana)
-  'Key Lento': [848, 868, 8, 'Leonida Keys'], 'Abismo Key': [830, 905, 4, 'Leonida Keys'], 'Maroon Key': [812, 922, 4, 'Leonida Keys'],
-  'Corsair Key': [870, 925, 4, 'Leonida Keys'], 'Gambit Bay': [790, 880, 8, 'Leonida Keys'], 'Shoeless Keys': [765, 895, 8, 'Leonida Keys'],
-  'Permit Keys': [895, 948, 5, 'Leonida Keys'], 'Southwind': [882, 936, 4, 'Leonida Keys'], 'Mile Zero': [900, 942, 3, 'Leonida Keys'],
-  'Mariana County': [800, 840, 14, 'Leonida Keys'], 'North Mariana County': [760, 780, 12, 'Leonida Keys'],
-  // Grassrivers
-  'Grassrivers': [480, 545, 35, 'Grassrivers'], 'Pelican Valley': [400, 592, 10, 'Grassrivers'], 'Gullet Marsh': [380, 605, 8, 'Grassrivers'],
-  'Buckskin Swamp': [540, 565, 10, 'Grassrivers'], 'Cottonmouth Lake': [520, 500, 8, 'Grassrivers'], 'Wetman Bay': [610, 742, 8, 'Grassrivers'],
-  'Watson Bay': [305, 598, 6, 'Grassrivers'], 'Belpoint': [528, 760, 4, 'Grassrivers'], 'Sandbars': [515, 778, 6, 'Grassrivers'],
-  // Ambrosia (condado de Leonard)
-  'Ambrosia': [522, 338, 6, 'Ambrosia'], 'Lake Leonida': [552, 320, 8, 'Ambrosia'], 'Leonard County': [590, 385, 14, 'Ambrosia'],
-  // Port Gellhorn (condado de Kelly)
-  'Port Gellhorn': [215, 415, 8, 'Port Gellhorn'], 'Wild Hog Point': [160, 385, 4, 'Port Gellhorn'], 'Kelly County': [300, 395, 20, 'Port Gellhorn'],
-  'Historic Route 628': [330, 393, 8, 'Port Gellhorn'], 'Starlet Motel': [336, 391, 2, 'Port Gellhorn'], 'Frogswater': [300, 322, 8, 'Port Gellhorn'],
-  'North Kelly County': [215, 280, 14, 'Port Gellhorn'], 'Millport': [270, 330, 6, 'Port Gellhorn'], 'Manifest Canyon': [300, 240, 10, 'Port Gellhorn'],
-  'Gellhorn Raceway': [245, 402, 3, 'Port Gellhorn'],
+/* Zonas del mapa: [x, y, radio, región]. x/y en píxeles del mapa oficial "Visit Leonida"
+ * (1461 x 2000); se convierten a coordenadas del mapa propio (1000 x 1394) más abajo. */
+const ANCLAS_PX = {
+  // Vice City y condado de Vice-Dale
+  'Downtown': [1025, 1068, 6, 'Vice City'], 'Bayside': [1050, 944, 5, 'Vice City'], 'Tequesta': [984, 1190, 6, 'Vice City'],
+  'Tequesta Retreat': [1065, 1185, 5, 'Vice City'], 'Crosstown': [1020, 993, 6, 'Vice City'], 'Little Cuba': [965, 1066, 6, 'Vice City'],
+  'La Perle': [993, 929, 6, 'Vice City'], 'Little Haiti': [985, 900, 5, 'Vice City'], 'Stockyard': [1058, 899, 5, 'Vice City'],
+  'Decor District': [1061, 866, 5, 'Vice City'], 'Salton': [908, 1081, 6, 'Vice City'], 'Southside': [912, 1300, 6, 'Vice City'],
+  'Rockridge': [953, 996, 6, 'Vice City'], 'Balsero': [856, 999, 6, 'Vice City'], 'VCIA': [826, 1150, 10, 'Vice City'],
+  'Griffin': [845, 960, 4, 'Vice City'], 'Peacock Bay': [970, 1278, 5, 'Vice City'], 'Peacock Estates': [965, 1318, 5, 'Vice City'],
+  'Shoreline': [1053, 1033, 4, 'Vice City'], 'Hamlet': [817, 1371, 8, 'Grassrivers'], 'South Vice-Dale': [903, 1362, 6, 'Vice City'],
+  'Waning Sands': [1080, 646, 6, 'Vice City'], 'Vinewood Beach': [1154, 670, 5, 'Vice City'], 'Leaf Links': [1132, 835, 5, 'Vice City'],
+  'Belville': [961, 792, 8, 'Ambrosia'], 'Peregrine Bay': [905, 1430, 5, 'Vice City'],
+  'Port Vice City': [1176, 1112, 5, 'Vice City'], 'Rialto Islands': [1121, 935, 4, 'Vice City'], 'Vespucci Island': [1132, 974, 3, 'Vice City'],
+  'Starfish Island': [1148, 1027, 3, 'Vice City'], 'Salton Memorial Island': [1130, 995, 2, 'Vice City'], 'Casanova Island': [1163, 947, 3, 'Vice City'],
+  'Penmarch Isle': [1167, 885, 3, 'Vice City'], 'Neptune Circle': [1108, 958, 3, 'Vice City'], 'Washington Island': [1213, 866, 3, 'Vice City'],
+  'Vice Beach': [1245, 978, 6, 'Vice City'], 'Washington Beach': [1264, 889, 5, 'Vice City'], 'Ocean Beach': [1258, 1045, 6, 'Vice City'],
+  'Oldby Island': [1221, 912, 3, 'Vice City'], 'Waxman Island': [1127, 1066, 3, 'Vice City'], 'Catalan Key': [1061, 1285, 4, 'Vice City'],
+  'Gloriana Key': [1166, 1250, 4, 'Vice City'], 'Oceanarium': [1078, 1228, 3, 'Vice City'], 'Dalton Island': [1264, 1190, 4, 'Vice City'],
+  // Leonida Keys
+  'Key Lento': [831, 1666, 9, 'Leonida Keys'], 'Abismo Key': [657, 1786, 5, 'Leonida Keys'], 'Maroon Key': [657, 1722, 4, 'Leonida Keys'],
+  'Corsair Key': [986, 1478, 4, 'Leonida Keys'], 'Gambit Bay': [821, 1574, 8, 'Leonida Keys'], 'Shoeless Keys': [884, 1518, 5, 'Leonida Keys'],
+  'Permit Keys': [532, 1688, 6, 'Leonida Keys'], 'Southwind': [478, 1710, 5, 'Leonida Keys'], 'Mile Zero': [403, 1740, 6, 'Leonida Keys'],
+  'Goose Key': [407, 1693, 4, 'Leonida Keys'], 'Riquezas Keys': [318, 1659, 6, 'Leonida Keys'],
+  // Grassrivers (condado de Mariana)
+  'Grassrivers': [658, 1326, 14, 'Grassrivers'], 'Mariana County': [601, 1462, 18, 'Grassrivers'], 'North Mariana County': [700, 1230, 12, 'Grassrivers'],
+  'Pelican Valley': [761, 1466, 7, 'Grassrivers'], 'Gullet Marsh': [705, 1440, 6, 'Grassrivers'], 'Cottonmouth Lake': [735, 1565, 5, 'Grassrivers'],
+  'Watson Bay': [631, 1405, 7, 'Grassrivers'], 'Bobcat Key': [480, 1285, 5, 'Grassrivers'], 'Big Pine': [575, 1246, 6, 'Grassrivers'],
+  'Breakwater Quarry': [632, 1166, 6, 'Grassrivers'], 'Bluegrass': [819, 1266, 6, 'Grassrivers'], 'Wetman Bay': [560, 1500, 8, 'Grassrivers'],
+  'Belpoint': [256, 1098, 5, 'Port Gellhorn'], 'Sandbars': [207, 810, 6, 'Port Gellhorn'], 'Capri': [420, 1055, 8, 'Port Gellhorn'],
+  // Leonard County / Ambrosia
+  'Ambrosia': [811, 714, 7, 'Ambrosia'], 'Lake Leonida': [884, 627, 10, 'Ambrosia'], 'Leonard County': [1000, 740, 16, 'Ambrosia'],
+  'North Leonard County': [874, 505, 10, 'Ambrosia'], 'South Leonard County': [888, 866, 10, 'Ambrosia'], 'Allied Crystal': [802, 745, 3, 'Ambrosia'],
+  'Millport': [963, 460, 7, 'Ambrosia'], 'Richard Barebone State Park': [1046, 530, 8, 'Ambrosia'],
+  // Kelly County / Port Gellhorn
+  'Port Gellhorn': [447, 715, 9, 'Port Gellhorn'], 'Wild Hog Point': [360, 779, 4, 'Port Gellhorn'], 'Kelly County': [619, 792, 22, 'Port Gellhorn'],
+  'Historic Route 628': [560, 720, 6, 'Port Gellhorn'], 'Starlet Motel': [560, 705, 2, 'Port Gellhorn'], 'Frogswater': [648, 688, 7, 'Port Gellhorn'],
+  'Thrillbilly': [700, 630, 4, 'Port Gellhorn'], 'North Kelly County': [600, 570, 14, 'Port Gellhorn'], 'Manifest Canyon': [569, 590, 7, 'Port Gellhorn'],
+  'Gellhorn Raceway': [437, 872, 4, 'Port Gellhorn'], 'Gellhorn': [514, 894, 6, 'Port Gellhorn'], 'Emerald Springs': [672, 840, 7, 'Port Gellhorn'],
+  'Buckskin Swamp': [701, 946, 8, 'Port Gellhorn'], 'South Kelly County': [576, 1011, 10, 'Port Gellhorn'], 'Draper Island': [359, 599, 6, 'Port Gellhorn'],
+  'Hoffman': [520, 560, 3, 'Port Gellhorn'],
   // Mount Kalaga (condado de Lummox)
-  'Mount Kalaga': [405, 150, 10, 'Mount Kalaga'], 'Lummox County': [430, 185, 35, 'Mount Kalaga'], 'Moreau': [320, 190, 8, 'Mount Kalaga'],
-  'West Kalaga': [300, 208, 8, 'Mount Kalaga'], 'Kalaga Reservoir': [330, 116, 4, 'Mount Kalaga'], 'Emerald Springs': [470, 242, 8, 'Mount Kalaga'],
-  'East Lummox County': [600, 170, 20, 'Mount Kalaga'], 'Northern Ridge': [470, 112, 10, 'Mount Kalaga'], 'Hyde Island': [578, 84, 3, 'Mount Kalaga'],
+  'Mount Kalaga': [727, 452, 12, 'Mount Kalaga'], 'Lummox County': [727, 400, 30, 'Mount Kalaga'], 'Moreau': [754, 331, 7, 'Mount Kalaga'],
+  'MacAlister': [687, 337, 3, 'Mount Kalaga'], 'West Kalaga': [600, 470, 8, 'Mount Kalaga'], 'Kalaga Reservoir': [690, 490, 5, 'Mount Kalaga'],
+  'Grayson': [555, 436, 6, 'Mount Kalaga'], 'Bonanza': [703, 283, 6, 'Mount Kalaga'], 'East Lummox County': [931, 354, 12, 'Mount Kalaga'],
+  'Northern Ridge': [760, 300, 10, 'Mount Kalaga'], 'Hyde Island': [839, 230, 4, 'Mount Kalaga'], 'Featherstone Islands': [555, 313, 5, 'Mount Kalaga'],
 };
+const ANCLAS = Object.fromEntries(Object.entries(ANCLAS_PX).map(([k, [px, py, r, reg]]) =>
+  [k, [Math.round((px - 48) * 10000 / 1364) / 10, Math.round((py - 48) * 10000 / 1364) / 10, r, reg]]));
 
 const GRUPOS = [
   { id: 'secretos', nombre: 'Secretos y botín' },
@@ -104,7 +115,7 @@ const POIS = [
   /* ───────── ESCONDITES ───────── */
   { id: 'casa-jason', nombre: 'Casa de Jason', cat: 'escondite', ancla: 'Key Lento', desc: 'Primer escondite de Jason en los Cayos.', fuentes: ['V6', 'BL'], estado: 'confirmado' },
   { id: 'depto-lucia', nombre: 'Departamento de Lucía', cat: 'escondite', ancla: 'Crosstown', desc: 'Escondite de Lucía en Crosstown.', fuentes: ['V6', 'G6M'], estado: 'confirmado' },
-  { id: 'starlet-motel', nombre: 'Starlet Motel', cat: 'escondite', ancla: 'Starlet Motel', zona: 'Historic Route 628, condado de Kelly',
+  { id: 'starlet-motel', nombre: 'Starlet Motel', cat: 'escondite', ancla: 'Starlet Motel', zona: 'Condado de Kelly, al este de Port Gellhorn',
     desc: 'Motel del Capítulo 2. Ojo: hay cartas que se pierden si no las tomas antes de terminar ese capítulo.', fuentes: ['V6', 'XC'], estado: 'confirmado' },
   { id: 'y-vice-city', nombre: 'Y Vice City', cat: 'escondite', ancla: 'Washington Beach', desc: 'Hotel de Vice Beach marcado como escondite.', fuentes: ['V6'], estado: 'una_fuente' },
 
@@ -192,9 +203,9 @@ const POIS = [
   { id: 'carta-serena', nombre: 'Carta: Serena (Oro) — NINE1NINE Dancers', cat: 'carta', ancla: 'Peacock Estates', zona: 'Garaje de la finca más al sur (no está en el club)', videos: [yt('aJ64tOXDols', 82, 'JFL VIDEOS')], fuentes: ['XC'], estado: 'una_fuente' },
   { id: 'carta-wokester', nombre: 'Carta: Wokester (Azul) — Legends of Ratface', cat: 'carta', ancla: 'Key Lento', zona: 'Tienda The Wonder Whale, banca del lado noreste', videos: [yt('Eiyp9WgH5uI', 1, "Collector's Vault")], fuentes: ['XC'], estado: 'una_fuente' },
   { id: 'carta-thelma', nombre: 'Carta: Thelma — Delight Dancers', cat: 'carta', ancla: 'Key Lento', zona: 'Torre central: cuarto de control, un piso abajo de la cima', fuentes: ['BL'], estado: 'una_fuente' },
-  { id: 'carta-braelynn', nombre: 'Carta: Braelynn (Rojo profundo) — NINE1NINE Dancers', cat: 'carta', ancla: 'North Kelly County', zona: 'Dentro del Observatorio Hoffman',
+  { id: 'carta-braelynn', nombre: 'Carta: Braelynn (Rojo profundo) — NINE1NINE Dancers', cat: 'carta', ancla: 'Hoffman', zona: 'Dentro del Observatorio Hoffman',
     pasos: ['Trepa al auto chocado.', 'Sube por el andamio.', 'Entra por la ventana abierta.'], fuentes: ['BL'], estado: 'una_fuente' },
-  { id: 'carta-dominic', nombre: 'Carta: Dominic Brizzolato (Oro) — Vice City Manatees', cat: 'carta', ancla: 'Catalan Key', zona: 'Vice City Oceanarium (al noreste de Catalan Key)',
+  { id: 'carta-dominic', nombre: 'Carta: Dominic Brizzolato (Oro) — Vice City Manatees', cat: 'carta', ancla: 'Oceanarium', zona: 'Vice City Oceanarium (al noreste de Catalan Key)',
     desc: 'Bajo la cúpula, dentro de la gran boca de tiburón, junto a la decoración de tortuga.', fuentes: ['BL'], estado: 'una_fuente' },
   { id: 'carta-makeek', nombre: 'Carta: Makeek River (Oro) — Vice City Manatees', cat: 'carta', ancla: 'Ocean Beach', zona: 'Garaje en la punta sur de Vice Beach',
     pasos: ['Unas tarimas bloquean la puerta: empújalas con un vehículo.', 'La carta está en una caja fuerte: ábrela con explosivos.'], fuentes: ['BL'], estado: 'una_fuente' },
@@ -228,7 +239,7 @@ const POIS = [
   { id: 'esc-wonder-whale', nombre: 'Escaneo: The Wonder Whale', cat: 'escaneo', ancla: 'Key Lento', zona: 'Escultura de ballena frente a la tienda, Sunbelt Hwy', fuentes: ['BL', 'GS'], estado: 'confirmado' },
   { id: 'esc-thicc-herbie', nombre: 'Escaneo: Thicc Herbie (el dirigible)', cat: 'escaneo', ancla: 'Maroon Key', zona: 'Escanéalo desde el mirador del oeste de Abismo Key', fuentes: ['BL'], estado: 'una_fuente' },
   { id: 'esc-funfair', nombre: 'Escaneo: Gellhorn Funfair', cat: 'escaneo', ancla: 'Port Gellhorn', zona: 'La rueda de la fortuna de la feria abandonada', desc: 'En un carrito chocón hay una carta de Right Wing.', fuentes: ['BL'], estado: 'una_fuente' },
-  { id: 'esc-hoffman', nombre: 'Escaneo: Hoffman Observatory', cat: 'escaneo', ancla: 'North Kelly County', zona: 'Cima del pico del extremo oeste del norte de Kelly', fuentes: ['BL'], estado: 'una_fuente' },
+  { id: 'esc-hoffman', nombre: 'Escaneo: Hoffman Observatory', cat: 'escaneo', ancla: 'Hoffman', zona: 'Cima del pico del extremo oeste del norte de Kelly', fuentes: ['BL'], estado: 'una_fuente' },
   { id: 'esc-ruinas', nombre: 'Escaneo: Imperial Spanish Ruins', cat: 'escaneo', ancla: 'Mount Kalaga', zona: 'Cima del pico suroeste del parque', fuentes: ['BL'], estado: 'una_fuente' },
   { id: 'esc-selkie', nombre: 'Escaneo: Selkie Hole', cat: 'escaneo', ancla: 'Emerald Springs', zona: 'Baja las escaleras del punto de buceo', fuentes: ['BL'], estado: 'una_fuente' },
   { id: 'esc-pistola', nombre: 'Escaneo: Gimme All Your Oil (escultura de pistola)', cat: 'escaneo', ancla: 'Decor District', zona: 'Al sur del mall principal, noreste de Stockyard Speedshop', fuentes: ['BL'], estado: 'una_fuente' },
@@ -259,9 +270,9 @@ const POIS = [
     desc: 'Un perro con lentes en moto acuática te lleva a su isla, donde desentierra un tesoro. Una sola vez.', requisitos: 'Nadar solo ~5 minutos; escucha ladridos',
     pasos: ['Nada en mar abierto en Gambit Bay unos 5 minutos.', 'Súbete a la moto del perro y no te bajes.', 'En Dog Island lánzale la pelota: desentierra el botín.', 'Busca los lentes Sports Wrap junto al bote volteado.'],
     hora: 'Cualquier hora', fuentes: ['GS', 'AGW'], estado: 'confirmado', etiquetas: ['≈ $1,200'] },
-  { id: 'ev-ovni', nombre: 'Evento: OVNI (trofeo "The Truth Is Out There")', cat: 'evento', ancla: 'Kelly County', x: 350, y: 380, zona: 'Camino de terracería al este de Port Gellhorn, cerca del Starlet Motel',
+  { id: 'ev-ovni', nombre: 'Evento: OVNI (trofeo "The Truth Is Out There")', cat: 'evento', ancla: 'Historic Route 628', zona: 'Camino de terracería al este de Port Gellhorn, cerca del Starlet Motel',
     hora: 'De noche, después de las 2:00 a.m.', requisitos: 'Después del Capítulo 1', fuentes: ['GS', 'MM'], estado: 'confirmado', etiquetas: ['Trofeo'] },
-  { id: 'ev-bigfoot', nombre: 'Evento: avistamiento de Bigfoot (Skunk Ape)', cat: 'evento', ancla: 'Gambit Bay', zona: 'Puente de Old Fort Road, oeste de Gambit Bay',
+  { id: 'ev-bigfoot', nombre: 'Evento: avistamiento de Bigfoot (Skunk Ape)', cat: 'evento', ancla: 'Shoeless Keys', zona: 'Puente de Old Fort Road, oeste de Gambit Bay',
     desc: 'Cuando escuches el rugido, síguelo hasta el "Tree Effigy" en el bosque al sur del puente; la primera vez Jason se desmaya. Forma parte de la búsqueda de Kirk (volante en el bar Skeeter\'s de Hamlet).', hora: 'De noche', fuentes: ['MM', 'GS'], estado: 'una_fuente' },
   { id: 'ev-drunk-jimmy', nombre: 'Evento: el viejo marinero (arpón)', cat: 'evento', ancla: 'Key Lento', zona: 'Entrada de un bar al suroeste de la casa de Jason',
     pasos: ['Ve entre 2 y 4 a.m.', 'Te pide todo tu dinero: rechaza (baja a $5).', 'Síguelo a la alberca; suelta el arma.', 'Toma el arpón Arras Bullhead.'], hora: '2:00–4:00 a.m.', fuentes: ['GS'], estado: 'una_fuente' },
@@ -286,7 +297,7 @@ const POIS = [
   { id: 'ev-jackson', nombre: 'Evento: Jackson y los calzones antibalas', cat: 'evento', ancla: 'Griffin', zona: 'Griffin Shooting Range', requisitos: 'Sacar 3 oros en un reto del campo de tiro', fuentes: ['GS'], estado: 'una_fuente', etiquetas: ['$10,000'] },
   { id: 'ev-m7-recluta', nombre: 'Evento: M7 golpea a un recluta', cat: 'evento', ancla: 'Hamlet', zona: 'Cerca de la armería Big Shots',
     desc: 'Defiéndelo: te dice dónde está el escondite de M7 (Nova Auto Junkyard), con caja fuerte y un auto único.', fuentes: ['GS', 'BDO'], estado: 'confirmado' },
-  { id: 'ev-manatee-motel', nombre: 'Evento: gritos en el Manatee Motel (tigre)', cat: 'evento', ancla: 'Hamlet', x: 625, y: 560, zona: 'Suroeste de Hamlet',
+  { id: 'ev-manatee-motel', nombre: 'Evento: gritos en el Manatee Motel (tigre)', cat: 'evento', ancla: 'Grassrivers', zona: 'Suroeste de Hamlet',
     desc: 'Un tigre ataca a pandilleros. Detrás: caja fuerte con +$1,000, cocaína y el rifle Kingfisher\'s Laird 350. Después llega un auto con más pandilleros.', fuentes: ['GS'], estado: 'una_fuente' },
   { id: 'ev-demanda', nombre: 'Evento: choque y demanda', cat: 'evento', ancla: 'Balsero', desc: 'Atestiguar paga ~$10,000; chantajear hasta ~$18,000.', requisitos: 'Jugar como Jason', fuentes: ['GS'], estado: 'una_fuente' },
   { id: 'ev-hombre-desnudo', nombre: 'Evento: el hombre desnudo (Gene)', cat: 'evento', ancla: 'Ocean Beach', desc: 'Cúbrelo de la policía y te da un reloj Novak Lauret.', hora: 'Por la tarde', requisitos: 'Capítulo 3 o 4 en adelante', fuentes: ['GS', 'MM'], estado: 'confirmado' },
@@ -294,9 +305,9 @@ const POIS = [
   { id: 'ev-sahara', nombre: 'Evento: el repartidor de Sahara', cat: 'evento', ancla: 'Little Cuba', zona: 'Camión de Sahara chocado en la carretera',
     desc: 'Haz tres entregas: Southside (te roban el paquete), Paterson Fruit Farm (petardo) y una mansión de Peacock Bay (tigres: vete con calma).', requisitos: 'Capítulo 3', fuentes: ['GS'], estado: 'una_fuente' },
   { id: 'ev-abogado', nombre: 'Evento: el abogado del contenedor', cat: 'evento', ancla: 'Crosstown', desc: 'Un indigente que dice ser abogado te pide pastillas Zombix. Repetible.', fuentes: ['GS'], estado: 'una_fuente' },
-  { id: 'ev-beefslap', nombre: 'Evento: Beefslap y las manzanas', cat: 'evento', ancla: 'Frogswater', zona: 'Caminos al norte de Thrillbilly Mud Club', requisitos: 'Capítulo 2', desc: 'Premio: vale de Wasteland Off-Road para el taller de Port Gellhorn.', fuentes: ['GS', 'MM'], estado: 'confirmado' },
-  { id: 'ev-caleb', nombre: 'Evento: la venganza del tractor de Caleb', cat: 'evento', ancla: 'Kelly County', x: 320, y: 360, zona: 'Entre el Starlet Motel y Frogswater', requisitos: 'Capítulo 2', desc: 'Premio: gorra Stanley Engines.', fuentes: ['GS', 'MM'], estado: 'confirmado' },
-  { id: 'ev-oso-mina', nombre: 'Evento: turista y oso en la mina MacAlister', cat: 'evento', ancla: 'Moreau', zona: 'Mina de oro MacAlister, oeste de Moreau', fuentes: ['GS', 'MM'], estado: 'confirmado' },
+  { id: 'ev-beefslap', nombre: 'Evento: Beefslap y las manzanas', cat: 'evento', ancla: 'Thrillbilly', zona: 'Caminos al norte de Thrillbilly Mud Club', requisitos: 'Capítulo 2', desc: 'Premio: vale de Wasteland Off-Road para el taller de Port Gellhorn.', fuentes: ['GS', 'MM'], estado: 'confirmado' },
+  { id: 'ev-caleb', nombre: 'Evento: la venganza del tractor de Caleb', cat: 'evento', ancla: 'Frogswater', zona: 'Entre el Starlet Motel y Frogswater', requisitos: 'Capítulo 2', desc: 'Premio: gorra Stanley Engines.', fuentes: ['GS', 'MM'], estado: 'confirmado' },
+  { id: 'ev-oso-mina', nombre: 'Evento: turista y oso en la mina MacAlister', cat: 'evento', ancla: 'MacAlister', zona: 'Mina de oro MacAlister, oeste de Moreau', fuentes: ['GS', 'MM'], estado: 'confirmado' },
   { id: 'ev-fantasma', nombre: 'Evento: el fantasma del paso a desnivel', cat: 'evento', ancla: 'Lummox County', zona: 'Paso a desnivel de Sassafrass Road', hora: 'De noche', fuentes: ['GS', 'MM'], estado: 'confirmado' },
   { id: 'ev-avioneta', nombre: 'Evento: avioneta estrellada con cocaína', cat: 'evento', ancla: 'Grassrivers', desc: 'Cocaína (~$1,000), botín y una pistola de bengalas.', fuentes: ['GS', 'MM'], estado: 'confirmado' },
   { id: 'ev-cigarro', nombre: 'Evento: un cigarro a cambio de un pitazo', cat: 'evento', ancla: 'La Perle', desc: 'Dale un cigarro a un desconocido y te marca un escondite de pandilla en el mapa.', fuentes: ['GS', 'AGW'], estado: 'rumor' },
@@ -335,7 +346,7 @@ const POIS = [
   { id: 'ocean-view', nombre: 'Ocean View Hotel', cat: 'hotel', ancla: 'Ocean Beach', fuentes: ['V6', 'G6M'], estado: 'confirmado' },
   { id: 'vice-regal', nombre: 'Vice Regal Hotel', cat: 'hotel', ancla: 'Washington Beach', fuentes: ['V6', 'G6M'], estado: 'confirmado' },
   { id: 'la-cascara', nombre: 'La Cascara Motel', cat: 'hotel', ancla: 'Port Gellhorn', fuentes: ['TBM', 'G6M'], estado: 'confirmado' },
-  { id: 'manatee-motel', nombre: 'Manatee Motel', cat: 'hotel', ancla: 'Hamlet', x: 627, y: 562, zona: 'Suroeste de Hamlet', fuentes: ['GS', 'XC'], estado: 'confirmado' },
+  { id: 'manatee-motel', nombre: 'Manatee Motel', cat: 'hotel', ancla: 'Grassrivers', zona: 'Suroeste de Hamlet', fuentes: ['GS', 'XC'], estado: 'confirmado' },
 
   /* ───────── SERVICIOS ───────── */
   { id: 'alpha-gas', nombre: 'Alpha Gas Station', cat: 'gasolinera', ancla: 'Historic Route 628', fuentes: ['V6'], estado: 'una_fuente' },
@@ -349,7 +360,7 @@ const POIS = [
   { id: 'vbpd', nombre: 'Vice Beach Police Department', cat: 'policia', ancla: 'Ocean Beach', fuentes: ['V6', 'G6M'], estado: 'confirmado' },
   { id: 'crosstown-pd', nombre: 'Comisaría de Crosstown', cat: 'policia', ancla: 'Crosstown', zona: 'NW 9th Street', fuentes: ['XT'], estado: 'una_fuente' },
   { id: 'ambrosia-pd', nombre: 'Ambrosia Police Department', cat: 'policia', ancla: 'Ambrosia', fuentes: ['V6', 'G6M'], estado: 'confirmado' },
-  { id: 'prision-hamlet', nombre: 'Prisión de Hamlet', cat: 'policia', ancla: 'Hamlet', fuentes: ['V6', 'BL'], estado: 'confirmado' },
+  { id: 'prision-hamlet', nombre: 'Hamlet Correctional Institution (prisión)', cat: 'policia', ancla: 'Hamlet', fuentes: ['V6', 'BL'], estado: 'confirmado' },
 
   /* ───────── OCIO ───────── */
   { id: 'sahara-arena', nombre: 'Sahara Arena', cat: 'ocio', ancla: 'Shoreline', fuentes: ['V6', 'G6M'], estado: 'confirmado' },
@@ -358,21 +369,21 @@ const POIS = [
   { id: 'leaf-links-golf', nombre: 'Leaf Links Golf Club', cat: 'ocio', ancla: 'Leaf Links', fuentes: ['V6', 'G6M'], estado: 'confirmado' },
   { id: 'boone-speedway', nombre: 'Boone Speedway', cat: 'ocio', ancla: 'Hamlet', fuentes: ['XT', 'BL'], estado: 'confirmado' },
   { id: 'griffin-range', nombre: 'Griffin Shooting Range', cat: 'ocio', ancla: 'Griffin', fuentes: ['GS'], estado: 'una_fuente' },
-  { id: 'oceanarium', nombre: 'Vice City Oceanarium', cat: 'ocio', ancla: 'Catalan Key', fuentes: ['BL', 'GS'], estado: 'confirmado' },
+  { id: 'oceanarium', nombre: 'Vice City Oceanarium', cat: 'ocio', ancla: 'Oceanarium', fuentes: ['BL', 'GS'], estado: 'confirmado' },
   { id: 'gellhorn-raceway', nombre: 'Gellhorn Raceway', cat: 'ocio', ancla: 'Gellhorn Raceway', fuentes: ['TBM', 'G6M'], estado: 'confirmado' },
-  { id: 'thrillbilly', nombre: 'Thrillbilly Mud Club', cat: 'ocio', ancla: 'Frogswater', fuentes: ['GS', 'G6M'], estado: 'confirmado' },
+  { id: 'thrillbilly', nombre: 'Thrillbilly Mud Club', cat: 'ocio', ancla: 'Thrillbilly', fuentes: ['GS', 'G6M'], estado: 'confirmado' },
 
   /* ───────── EMBLEMÁTICOS / NATURALEZA ───────── */
   { id: 'dirigible', nombre: 'Dirigible (Thicc Herbie)', cat: 'emblematico', ancla: 'Maroon Key', fuentes: ['V6', 'BL'], estado: 'confirmado' },
   { id: 'faro-catalan', nombre: 'Faro de Catalan Key', cat: 'emblematico', ancla: 'Catalan Key', fuentes: ['V6', 'G6M'], estado: 'confirmado' },
   { id: 'palaestra', nombre: 'Palaestra Tower', cat: 'emblematico', ancla: 'Bayside', zona: 'Catalan Blvd', fuentes: ['V6', 'G6M'], estado: 'confirmado' },
-  { id: 'hoffman', nombre: 'Observatorio Hoffman', cat: 'emblematico', ancla: 'North Kelly County', fuentes: ['BL'], estado: 'una_fuente' },
-  { id: 'ingenio', nombre: 'Ingenio azucarero Allied Crystal', cat: 'emblematico', ancla: 'Ambrosia', fuentes: ['V6', 'G6M'], estado: 'confirmado' },
+  { id: 'hoffman', nombre: 'Observatorio Hoffman', cat: 'emblematico', ancla: 'Hoffman', fuentes: ['BL'], estado: 'una_fuente' },
+  { id: 'ingenio', nombre: 'Ingenio azucarero Allied Crystal', cat: 'emblematico', ancla: 'Allied Crystal', fuentes: ['V6', 'G6M'], estado: 'confirmado' },
   { id: 'fuzzard', nombre: 'Fuzzard Power Station', cat: 'emblematico', ancla: 'Peregrine Bay', fuentes: ['V6', 'G6M'], estado: 'confirmado' },
   { id: 'gellhorn-funfair', nombre: 'Feria abandonada de Gellhorn', cat: 'emblematico', ancla: 'Port Gellhorn', fuentes: ['BL'], estado: 'una_fuente' },
-  { id: 'monte-kalaga', nombre: 'Mount Kalaga (cima)', cat: 'naturaleza', ancla: 'Mount Kalaga', x: 405, y: 148, fuentes: ['V6'], estado: 'una_fuente' },
+  { id: 'monte-kalaga', nombre: 'Mount Kalaga (cima)', cat: 'naturaleza', ancla: 'Mount Kalaga', fuentes: ['V6'], estado: 'una_fuente' },
   { id: 'selkie-hole', nombre: 'Selkie Hole (punto de buceo)', cat: 'naturaleza', ancla: 'Emerald Springs', fuentes: ['BL', 'XC'], estado: 'confirmado' },
-  { id: 'lago-leonida', nombre: 'Lago Leonida', cat: 'naturaleza', ancla: 'Lake Leonida', x: 552, y: 318, fuentes: ['G6M', 'BL'], estado: 'confirmado' },
+  { id: 'lago-leonida', nombre: 'Lago Leonida', cat: 'naturaleza', ancla: 'Lake Leonida', fuentes: ['G6M', 'BL'], estado: 'confirmado' },
 ];
 
 /* Coloca cada punto en el mapa a partir de su zona. */

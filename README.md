@@ -2,7 +2,7 @@
 
 Es una página web que también se instala como app en el celular (PWA, en Android y en iPhone). Incluye:
 
-- **Mapa ilustrado de Leonida** con la silueta real del estado (costa, ríos y lagos), sus 6 regiones, condados, carreteras y rótulos de colonias que aparecen al acercarte. Es un dibujo propio (`tools/generar_mapa.py`), no el arte del juego.
+- **Mapa ilustrado de Leonida** trazado sobre el mapa oficial "Visit Leonida": costa, islas, lagos, ríos, zonas urbanas, los 5 condados, carreteras (I-404, I-297, I-97, US-35, US-183, 1A…) y rótulos en sus posiciones oficiales. El dibujo es propio (`tools/generar_mapa.py`); la imagen oficial no se publica.
 - **175 puntos** tomados de guías públicas de la comunidad: autos raros y ocultos, escondites, **coleccionables** (cartas, meteoritos, flamencos, escaneos WAiNK, aros, saltos, revistas, armas únicas), **28 eventos aleatorios**, tiendas, ropa, restaurantes, bares, bancos, hoteles, talleres, gasolineras, transporte, policía, ocio y lugares emblemáticos.
 - **Filtros** por categoría (agrupadas como en el juego), por región y por confiabilidad del dato (✅ confirmado por 2+ fuentes, 📘 1 fuente, ❓ rumor, 👥 comunidad), además de un buscador.
 - **Fichas con truco paso a paso**: hora, requisitos (misión, Snap Gun, Key Cloner…) y **video** de YouTube o TikTok que se reproduce ahí mismo. Los links de X, Instagram, Facebook, Twitch y Kick se muestran como botón.
@@ -11,7 +11,8 @@ Es una página web que también se instala como app en el celular (PWA, en Andro
   - Hay un filtro de groserías en español y en inglés que detecta leetspeak (`p3nd3j0`), letras separadas (`p.u.t.o`) y letras repetidas.
   - Marca teléfonos, correos, links en el texto, spam y textos todo en mayúsculas.
   - **Nada se publica en automático**: todo llega a `admin.html` como *pendiente*.
-- **Wiki** (`wiki.html`): 62 personajes (con spoilers ocultos), 53 animales (hábitat, si se cazan, arma recomendada, variantes raras) y 114 vehículos (marca y auto real, dónde conseguirlo, precio de registro/venta, filtración o en disputa), más una guía de cómo robar, registrar y vender autos. Las fichas enlazan al mapa y viceversa.
+- **Wiki** (`wiki.html`): 62 personajes (los 4 con spoilers en una sección aparte que pide confirmación; botón para buscar sus imágenes y campo `foto` para imágenes propias), 53 animales (hábitat, si se cazan, arma recomendada, variantes raras) y 114 vehículos (marca y auto real, dónde conseguirlo, precio de registro/venta, filtración o en disputa), más una guía de cómo robar, registrar y vender autos. Las fichas enlazan al mapa y viceversa.
+- **Chat de la comunidad** (botón 💬 en el mapa y la wiki): cada visitante entra con un apodo y una cuenta anónima. La base de datos rechaza groserías, spam, links que no sean videos y mensajes en mayúsculas; limita la velocidad (1 mensaje cada 6 s, 20 cada 10 min); 3 reportes ocultan un mensaje. Los moderadores publican avisos oficiales (fijados arriba), ocultan, borran y bloquean desde `admin.html` → pestaña Chat.
 - **Panel de moderación** (`admin.html`): pendientes, publicados y rechazados. Resalta las groserías y permite editar antes de aprobar, rechazar con motivo, quitar del mapa y borrar.
 
 ## Probarlo en tu Mac
@@ -51,6 +52,7 @@ Seguridad en producción: el público solo puede *insertar* aportes, que siempre
 | `js/data.js` | **Datos del mapa**: categorías, zonas (`ANCLAS`) y puntos. Cada punto se ubica por su zona; si conoces la posición exacta pon `x` y `y` |
 | `tools/generar_mapa.py`, `tools/geo/` | Genera `assets/leonida.svg` (silueta, colores, carreteras y rótulos) |
 | `wiki.html`, `js/wiki.js`, `js/wiki-data.js`, `css/wiki.css` | Wiki de personajes, animales y vehículos (datos en `js/wiki-data.js`) |
+| `js/chat.js`, `css/chat.css` | Chat de la comunidad |
 | `js/moderation.js` | Filtro de groserías y spam |
 | `js/store.js` | Guardado (modo demo o Supabase) |
 | `assets/leonida.svg` | Mapa ilustrado (coordenadas 1000 × 1000) |

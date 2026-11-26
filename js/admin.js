@@ -56,7 +56,73 @@
       style="background-size:${MAPA_W * s}px ${MAPA_H * s}px;background-position:${w / 2 - x * s}px ${w / 2 - y * s}px"></div>`;
   }
 
+  /* ───── Chat ───── */
+  let chatMsgs = [], bloqueados = [];
+  async function cargarChat() {
+    if (demo) { $('#cola').innerHTML = '<div class="vacio-cola">El chat solo funciona con Supabase conectado.</div>'; return; }
+    try {
+      [chatMsgs, bloqueados] = await Promise.all([
+        Store.api('chat_mensajes?select=id,created_at,apodo,texto,oficial,oculto,reportes,user_id&order=id.desc&limit=200'),
+        Store.api('chat_bloqueados?select=user_id,motivo,hasta,creado&order=creado.desc'),
+      ]);
+    } catch (ex) { toast('Error al cargar el chat: ' + ex.message); return; }
+    $('#n-chat').textContent = chatMsgs.filter(m => m.oculto).length || '·';
+    pintarChat();
+  }
+  function pintarChat() {
+    const bloq = new Set(bloqueados.filter(b => !b.hasta || new Date(b.hasta) > new Date()).map(b => b.user_id));
+    const orden = [...chatMsgs].sort((a, b) => (b.oculto - a.oculto) || (b.reportes - a.reportes) || (b.id - a.id));
+    $('#cola').innerHTML = `
+      <form id="form-aviso" class="aporte aviso-form">
+        <div><h3>📢 Publicar aviso oficial</h3><p class="tenue">Aparece destacado y fijado arriba del chat para todos.</p></div>
+        <div><textarea name="texto" rows="2" maxlength="300" required placeholder="Ej. ¡Agregamos 30 coleccionables nuevos al mapa!"></textarea>
+          <label class="campo">Firma<input name="apodo" maxlength="24" value="Equipo Leonida Atlas"></label>
+          <button class="btn primario">Publicar aviso</button></div>
+      </form>
+      ${bloqueados.length ? `<div class="aporte"><div><h3>⛔ Bloqueados</h3></div><div>${bloqueados.map(b => `
+        <p class="meta"><span>${esc(b.user_id.slice(0, 8))}…</span><span>${esc(b.motivo || '')}</span><span>${b.hasta ? 'hasta ' + esc(fechaCorta(b.hasta)) : 'permanente'}</span>
+        <button class="btn ghost" data-c="desbloquear" data-u="${esc(b.user_id)}">Desbloquear</button></p>`).join('')}</div></div>` : ''}
+      ${orden.map(m => `
+        <article class="aporte chat-adm ${m.oculto ? 'alerta' : ''}" data-mid="${m.id}" data-u="${esc(m.user_id)}">
+          <div class="meta-chat">${m.oficial ? '📢 Oficial' : m.oculto ? '🙈 Oculto' : '💬 Visible'}<br><small>${esc(fechaCorta(m.created_at))}</small>
+            ${m.reportes ? `<br><span class="bandera roja">⚑ ${m.reportes} reporte(s)</span>` : ''}${bloq.has(m.user_id) ? '<br><span class="bandera">⛔ bloqueado</span>' : ''}</div>
+          <div><h3>${esc(m.apodo)} <small class="tenue">${esc(m.user_id.slice(0, 8))}…</small></h3>
+            <p class="mensaje">${esc(m.texto)}</p>
+            <div class="botones">
+              ${m.oculto ? '<button class="btn aprobar" data-c="mostrar">👁 Volver a mostrar</button>' : '<button class="btn ghost" data-c="ocultar">🙈 Ocultar</button>'}
+              <button class="btn rechazar" data-c="borrar">🗑 Borrar</button>
+              ${!m.oficial && !bloq.has(m.user_id) ? '<button class="btn ghost" data-c="bloq24">⛔ Bloquear 24 h</button><button class="btn ghost" data-c="bloqperm">⛔ Bloquear siempre</button>' : ''}
+            </div></div>
+        </article>`).join('') || '<div class="vacio-cola">No hay mensajes en el chat.</div>'}`;
+  }
+  $('#cola').addEventListener('submit', async e => {
+    if (e.target.id !== 'form-aviso') return;
+    e.preventDefault();
+    const f = e.target;
+    try {
+      await Store.api('chat_mensajes', { method: 'POST', body: JSON.stringify({ texto: f.texto.value.trim(), apodo: f.apodo.value.trim() || 'Equipo Leonida Atlas', oficial: true }), headers: { Prefer: 'return=minimal' } });
+      toast('Aviso publicado'); await cargarChat();
+    } catch (ex) { toast('Error: ' + ex.message); }
+  });
+  $('#cola').addEventListener('click', async e => {
+    const b = e.target.closest('[data-c]'); if (!b) return;
+    const art = b.closest('[data-mid]'), id = art?.dataset.mid, uid = b.dataset.u || art?.dataset.u;
+    try {
+      const c = b.dataset.c;
+      if (c === 'ocultar' || c === 'mostrar') await Store.api(`chat_mensajes?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ oculto: c === 'ocultar' }), headers: { Prefer: 'return=minimal' } });
+      if (c === 'borrar') { if (!confirm('¿Borrar este mensaje para siempre?')) return; await Store.api(`chat_mensajes?id=eq.${id}`, { method: 'DELETE' }); }
+      if (c === 'bloq24' || c === 'bloqperm') {
+        const motivo = prompt('Motivo del bloqueo (solo lo ven los moderadores):', 'Romper las reglas del chat'); if (motivo === null) return;
+        const hasta = c === 'bloq24' ? new Date(Date.now() + 864e5).toISOString() : null;
+        await Store.api('chat_bloqueados', { method: 'POST', body: JSON.stringify({ user_id: uid, motivo, hasta }), headers: { Prefer: 'resolution=merge-duplicates,return=minimal' } });
+      }
+      if (c === 'desbloquear') await Store.api(`chat_bloqueados?user_id=eq.${encodeURIComponent(uid)}`, { method: 'DELETE' });
+      toast('Listo'); await cargarChat();
+    } catch (ex) { toast('Error: ' + ex.message); }
+  });
+
   function pintar() {
+    if (tab === 'chat') return cargarChat();
     const lista = aportes.filter(a => a.estado === tab);
     if (tab === 'pendiente') lista.sort((a, b) => analizar(b).groserias.length - analizar(a).groserias.length || new Date(a.created_at) - new Date(b.created_at));
     if (!lista.length) { $('#cola').innerHTML = `<div class="vacio-cola">${tab === 'pendiente' ? '🎉 No hay aportes por revisar.' : 'Nada aquí todavía.'}</div>`; return; }
@@ -144,7 +210,7 @@
     document.querySelectorAll('[data-tab]').forEach(x => x.classList.toggle('on', x === t));
     pintar();
   }));
-  $('#btn-recargar').addEventListener('click', cargar);
+  $('#btn-recargar').addEventListener('click', () => (tab === 'chat' ? cargarChat() : cargar()));
 
   mostrar();
 })();
