@@ -135,6 +135,7 @@
       <p class="estado e-${p.estado}">${ESTADOS[p.estado].icono} ${ESTADOS[p.estado].txt}</p>
       ${(p.etiquetas || []).map(t => `<span class="etiqueta">${esc(t)}</span>`).join('')}
       ${p.desc ? `<p class="desc">${esc(p.desc)}</p>` : ''}
+      ${enWiki(p.id)}
       ${p.hora ? `<p class="dato">🕒 <b>Hora:</b> ${esc(p.hora)}</p>` : ''}
       ${p.requisitos ? `<p class="dato">🔑 <b>Requisitos:</b> ${esc(p.requisitos)}</p>` : ''}
       ${p.pasos?.length ? `<h3>Cómo conseguirlo</h3><ol class="pasos">${p.pasos.map(s => `<li>${esc(s)}</li>`).join('')}</ol>` : ''}
@@ -157,6 +158,14 @@
     if (volar) map.flyTo(aLatLng(p.x, p.y), Math.max(map.getZoom(), p.region === 'Vice City' ? 3 : 2), { duration: 0.6 });
     history.replaceState(null, '', `#poi=${encodeURIComponent(id)}`);
     pintarLista(todos.filter(coincide));
+  }
+
+  /* Entradas de la wiki relacionadas con este punto */
+  function enWiki(id) {
+    if (typeof PERSONAJES === 'undefined') return '';
+    const rel = [...PERSONAJES.map(x => ['personajes', x, '👤']), ...VEHICULOS.map(x => ['vehiculos', x, '🚗'])].filter(([, x]) => x.poi === id);
+    if (!rel.length) return '';
+    return `<p class="en-wiki">📚 En la wiki: ${rel.map(([t, x, i]) => `<a href="wiki.html#${t}/${encodeURIComponent(x.id)}">${i} ${esc(x.nombre)}</a>`).join(' · ')}</p>`;
   }
 
   function cerrar(qué) {

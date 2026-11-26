@@ -11,6 +11,7 @@ Es una página web que también se instala como app en el celular (PWA, en Andro
   - Hay un filtro de groserías en español y en inglés que detecta leetspeak (`p3nd3j0`), letras separadas (`p.u.t.o`) y letras repetidas.
   - Marca teléfonos, correos, links en el texto, spam y textos todo en mayúsculas.
   - **Nada se publica en automático**: todo llega a `admin.html` como *pendiente*.
+- **Wiki** (`wiki.html`): 62 personajes (con spoilers ocultos), 53 animales (hábitat, si se cazan, arma recomendada, variantes raras) y 114 vehículos (marca y auto real, dónde conseguirlo, precio de registro/venta, filtración o en disputa), más una guía de cómo robar, registrar y vender autos. Las fichas enlazan al mapa y viceversa.
 - **Panel de moderación** (`admin.html`): pendientes, publicados y rechazados. Resalta las groserías y permite editar antes de aprobar, rechazar con motivo, quitar del mapa y borrar.
 
 ## Probarlo en tu Mac
@@ -49,6 +50,7 @@ Seguridad en producción: el público solo puede *insertar* aportes, que siempre
 | `admin.html`, `js/admin.js`, `css/admin.css` | Panel de moderación |
 | `js/data.js` | **Datos del mapa**: categorías, zonas (`ANCLAS`) y puntos. Cada punto se ubica por su zona; si conoces la posición exacta pon `x` y `y` |
 | `tools/generar_mapa.py`, `tools/geo/` | Genera `assets/leonida.svg` (silueta, colores, carreteras y rótulos) |
+| `wiki.html`, `js/wiki.js`, `js/wiki-data.js`, `css/wiki.css` | Wiki de personajes, animales y vehículos (datos en `js/wiki-data.js`) |
 | `js/moderation.js` | Filtro de groserías y spam |
 | `js/store.js` | Guardado (modo demo o Supabase) |
 | `assets/leonida.svg` | Mapa ilustrado (coordenadas 1000 × 1000) |

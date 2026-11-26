@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Wiki — Leonida Atlas: personajes, animales y vehículos de GTA VI</title>
+  <meta name="description" content="Wiki de fans de GTA VI: personajes, animales de Leonida y vehículos con dónde conseguirlos.">
+  <meta name="theme-color" content="#0b1d2a">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <link rel="stylesheet" href="css/app.css?v=3">
+  <link rel="stylesheet" href="css/wiki.css?v=3">
+</head>
+<body class="wiki">
+  <header class="topbar">
+    <a class="marca" href="./" aria-label="Leonida Atlas, mapa">
+      <img src="assets/icon.svg" alt="" width="30" height="30"><span><b>Leonida</b> Atlas</span>
+    </a>
+    <nav class="nav-principal" aria-label="Secciones">
+      <a href="./">🗺️ <span>Mapa</span></a>
+      <a href="wiki.html" aria-current="page">📚 <span>Wiki</span></a>
+    </nav>
+    <label class="buscar">
+      <span aria-hidden="true">🔍</span>
+      <input id="q" type="search" placeholder="Buscar en la wiki…" autocomplete="off">
+    </label>
+  </header>
+
+  <main class="wiki-main">
+    <nav class="tabs-wiki" role="tablist">
+      <button role="tab" data-tab="personajes">👤 Personajes <em id="n-personajes"></em></button>
+      <button role="tab" data-tab="animales">🐾 Animales <em id="n-animales"></em></button>
+      <button role="tab" data-tab="vehiculos">🚗 Vehículos <em id="n-vehiculos"></em></button>
+    </nav>
+
+    <section id="filtros" class="filtros-wiki"></section>
+    <p id="conteo" class="tenue conteo-wiki"></p>
+    <div id="grid" class="grid-wiki"></div>
+    <section id="extra"></section>
+
+    <p class="aviso">
+      Wiki de fans <b>no oficial</b>, sin relación con Rockstar Games ni Take-Two. Información resumida de guías públicas de la comunidad
+      (primera semana del juego); puede tener errores. Los spoilers están ocultos hasta que los abras.
+    </p>
+  </main>
+
+  <dialog id="dlg-ficha" class="dialogo ficha-wiki">
+    <div id="ficha-contenido"></div>
+  </dialog>
+
+  <script src="js/config.js?v=3"></script>
+  <script src="js/data.js?v=3"></script>
+  <script src="js/wiki-data.js?v=3"></script>
+  <script src="js/comun.js?v=3"></script>
+  <script src="js/wiki.js?v=3"></script>
+</body>
+</html>
