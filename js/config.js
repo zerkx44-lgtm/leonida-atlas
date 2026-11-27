@@ -13,7 +13,7 @@ window.ATLAS_CONFIG = {
   SUPABASE_ANON_KEY: 'sb_publishable_sy717hF_ewRFi2AX3Zk-bQ_6KglP3Qe', // clave pública (publishable), segura en el navegador
   // Captcha Cloudflare Turnstile (clave PÚBLICA "site key"). Vacío = sin captcha.
   // La clave SECRETA va solo en Supabase → Authentication → Attack Protection.
-  TURNSTILE_SITE_KEY: '',
+  TURNSTILE_SITE_KEY: '0x4AAAAAAGVACLP_7G2gNlDm',
   DEMO_ADMIN_PIN: 'leonida2026',
   // Dominios aceptados para links de video en los aportes
   VIDEO_DOMINIOS: ['youtube.com', 'youtu.be', 'tiktok.com', 'x.com', 'twitter.com', 'instagram.com', 'facebook.com', 'fb.watch', 'twitch.tv', 'kick.com'],
