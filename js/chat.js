@@ -15,6 +15,7 @@
     'Si vas a contar algo de la historia, avisa con "SPOILER:" al inicio.',
     'Los mensajes con 3 reportes se ocultan y un moderador los revisa. Quien rompa las reglas puede ser bloqueado.',
     'Los mensajes se borran solos 24 horas después de enviarse.',
+    '¿Apoyaste en Ko-fi? Escribe tu apodo del chat en el mensaje de tu donación y te damos la insignia ☕ Apoyador.',
   ];
 
   /* ───── Interfaz ───── */
@@ -24,7 +25,7 @@
     <aside id="chat" class="chat" aria-label="Chat de la comunidad" hidden>
       <header class="chat-cab">
         <div><b>💬 Comunidad</b><small id="chat-estado" class="tenue"></small></div>
-        <div><button class="link" id="chat-ver-reglas">Reglas</button><button class="cerrar" id="chat-cerrar" aria-label="Cerrar chat">✕</button></div>
+        <div>${C.KOFI_URL ? `<a class="chat-apoyo" href="${esc(C.KOFI_URL)}" target="_blank" rel="noopener">☕ Apoyar</a>` : ''}<button class="link" id="chat-ver-reglas">Reglas</button><button class="cerrar" id="chat-cerrar" aria-label="Cerrar chat">✕</button></div>
       </header>
       <div id="chat-fijado" class="chat-fijado" hidden></div>
       <ol id="chat-lista" class="chat-lista" aria-live="polite"></ol>
@@ -40,6 +41,7 @@
   const panel = $('#chat'), lista = $('#chat-lista'), pie = $('#chat-pie');
 
   let mensajes = [], abierto = false, timer = null, enviando = false, widget = null;
+  let apoyadores = new Set(), apoyadoresAl = 0;
 
   /* ───── Sesión anónima ───── */
   const sesion = () => JSON.parse(localStorage.getItem(K_SES) || 'null');
@@ -95,7 +97,7 @@
     const orden = [...mensajes].sort((a, b) => a.id - b.id);
     lista.innerHTML = orden.map(m => `
       <li class="msj ${m.oficial ? 'oficial' : ''} ${m.user_id === mio ? 'mio' : ''}" data-id="${m.id}">
-        <div class="msj-cab"><b>${m.oficial ? '📢 ' : ''}${esc(m.apodo)}</b>${m.oficial ? '<span class="ins oro">Oficial</span>' : ''}<time>${esc(hora(m.created_at))}</time>
+        <div class="msj-cab"><b>${m.oficial ? '📢 ' : ''}${esc(m.apodo)}</b>${m.oficial ? '<span class="ins oro">Oficial</span>' : ''}${!m.oficial && apoyadores.has(m.user_id) ? '<span class="ins apoyo" title="Apoya a Leonida Atlas en Ko-fi">☕ Apoyador</span>' : ''}<time>${esc(hora(m.created_at))}</time>
           ${m.user_id !== mio && !m.oficial ? `<button class="msj-rep" data-reportar="${m.id}" title="Reportar mensaje" aria-label="Reportar mensaje">⚑</button>` : ''}</div>
         <p class="${/^\s*spoiler\s*:/i.test(m.texto) ? 'msj-spoiler' : ''}">${linkify(m.texto)}</p>
       </li>`).join('') || '<li class="vacio">Todavía no hay mensajes. ¡Sé el primero en saludar!</li>';
@@ -108,6 +110,9 @@
 
   async function cargar(alFinal) {
     try {
+      if (Date.now() - apoyadoresAl > 300000) {
+        try { apoyadores = new Set((await api('chat_apoyadores?select=user_id')).map(a => a.user_id)); apoyadoresAl = Date.now(); } catch {}
+      }
       const nuevos = await api('chat_mensajes?select=id,created_at,apodo,texto,oficial,user_id&order=id.desc&limit=80');
       const cambio = nuevos.length !== mensajes.length || (nuevos[0] && mensajes[0]?.id !== nuevos[0].id) || nuevos.some((m, i) => mensajes[i]?.id !== m.id);
       mensajes = nuevos;

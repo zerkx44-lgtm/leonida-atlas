@@ -46,3 +46,6 @@ body.chat-abierto .chat-fab { display: none; }
 }
 
 .chat-captcha:not(:empty) { margin: 6px 0 8px; min-height: 65px; }
+
+.chat-apoyo { font-size: 13px; color: #ffe1a8; text-decoration: none; margin-right: 10px; border: 1px solid #b8962b; border-radius: 999px; padding: 2px 9px; }
+.ins.apoyo { background: #3a300c; color: #ffe1a8; border: 1px solid #6b5a17; }

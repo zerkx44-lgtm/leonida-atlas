@@ -306,3 +306,22 @@ select cron.schedule('leonida-limpieza', '7 * * * *', $$
   delete from public.chat_mensajes where oficial and created_at < now() - interval '30 days';
   delete from public.aportes where estado = 'rechazado' and coalesce(revisado_at, created_at) < now() - interval '30 days';
 $$);
+
+-- ═════════ APOYADORES (insignia ☕ en el chat para quien dona en Ko-fi) ═════════
+-- Un moderador marca la cuenta anónima del chat de quien donó. Todos pueden ver
+-- quién tiene insignia; solo moderadores pueden darla o quitarla.
+create table if not exists public.chat_apoyadores (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  nota    text check (char_length(nota) <= 120),
+  creado  timestamptz not null default now()
+);
+alter table public.chat_apoyadores enable row level security;
+drop policy if exists "ver apoyadores" on public.chat_apoyadores;
+create policy "ver apoyadores" on public.chat_apoyadores for select using (true);
+drop policy if exists "admin da insignia" on public.chat_apoyadores;
+create policy "admin da insignia" on public.chat_apoyadores for insert to authenticated with check (privado.es_admin());
+drop policy if exists "admin quita insignia" on public.chat_apoyadores;
+create policy "admin quita insignia" on public.chat_apoyadores for delete to authenticated using (privado.es_admin());
+revoke all on public.chat_apoyadores from anon, authenticated;
+grant select (user_id, creado) on public.chat_apoyadores to anon, authenticated;
+grant select, insert, delete on public.chat_apoyadores to authenticated;

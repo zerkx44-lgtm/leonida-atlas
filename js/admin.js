@@ -60,13 +60,14 @@
   }
 
   /* ───── Chat ───── */
-  let chatMsgs = [], bloqueados = [];
+  let chatMsgs = [], bloqueados = [], apoyadores = [];
   async function cargarChat() {
     if (demo) { $('#cola').innerHTML = '<div class="vacio-cola">El chat solo funciona con Supabase conectado.</div>'; return; }
     try {
-      [chatMsgs, bloqueados] = await Promise.all([
+      [chatMsgs, bloqueados, apoyadores] = await Promise.all([
         Store.api('chat_mensajes?select=id,created_at,apodo,texto,oficial,oculto,reportes,user_id&order=id.desc&limit=200'),
         Store.api('chat_bloqueados?select=user_id,motivo,hasta,creado&order=creado.desc'),
+        Store.api('chat_apoyadores?select=user_id,nota,creado'),
       ]);
     } catch (ex) { toast('Error al cargar el chat: ' + ex.message); return; }
     $('#n-chat').textContent = chatMsgs.filter(m => m.oculto).length || '·';
@@ -74,6 +75,7 @@
   }
   function pintarChat() {
     const bloq = new Set(bloqueados.filter(b => !b.hasta || new Date(b.hasta) > new Date()).map(b => b.user_id));
+    const apoyo = new Set(apoyadores.map(a => a.user_id));
     const orden = [...chatMsgs].sort((a, b) => (b.oculto - a.oculto) || (b.reportes - a.reportes) || (b.id - a.id));
     $('#cola').innerHTML = `
       <form id="form-aviso" class="aporte aviso-form">
@@ -94,6 +96,7 @@
             <div class="botones">
               ${m.oculto ? '<button class="btn aprobar" data-c="mostrar">👁 Volver a mostrar</button>' : '<button class="btn ghost" data-c="ocultar">🙈 Ocultar</button>'}
               <button class="btn rechazar" data-c="borrar">🗑 Borrar</button>
+              ${!m.oficial ? (apoyo.has(m.user_id) ? '<button class="btn ghost" data-c="quitar-apoyo">Quitar ☕</button>' : '<button class="btn ghost" data-c="dar-apoyo">☕ Marcar apoyador</button>') : ''}
               ${!m.oficial && !bloq.has(m.user_id) ? '<button class="btn ghost" data-c="bloq24">⛔ Bloquear 24 h</button><button class="btn ghost" data-c="bloqperm">⛔ Bloquear siempre</button>' : ''}
             </div></div>
         </article>`).join('') || '<div class="vacio-cola">No hay mensajes en el chat.</div>'}`;
@@ -120,6 +123,11 @@
         await Store.api('chat_bloqueados', { method: 'POST', body: JSON.stringify({ user_id: uid, motivo, hasta }), headers: { Prefer: 'resolution=merge-duplicates,return=minimal' } });
       }
       if (c === 'desbloquear') await Store.api(`chat_bloqueados?user_id=eq.${encodeURIComponent(uid)}`, { method: 'DELETE' });
+      if (c === 'dar-apoyo') {
+        const nota = prompt('Nota interna (por ejemplo: donó en Ko-fi el 27/11):', 'Donación en Ko-fi'); if (nota === null) return;
+        await Store.api('chat_apoyadores', { method: 'POST', body: JSON.stringify({ user_id: uid, nota }), headers: { Prefer: 'resolution=merge-duplicates,return=minimal' } });
+      }
+      if (c === 'quitar-apoyo') await Store.api(`chat_apoyadores?user_id=eq.${encodeURIComponent(uid)}`, { method: 'DELETE' });
       toast('Listo'); await cargarChat();
     } catch (ex) { toast('Error: ' + ex.message); }
   });

@@ -14,6 +14,8 @@ window.ATLAS_CONFIG = {
   // Captcha Cloudflare Turnstile (clave PÚBLICA "site key"). Vacío = sin captcha.
   // La clave SECRETA va solo en Supabase → Authentication → Attack Protection.
   TURNSTILE_SITE_KEY: '0x4AAAAAAGVACLP_7G2gNlDm',
+  // Página de donaciones (Ko-fi)
+  KOFI_URL: 'https://ko-fi.com/iframeees',
   DEMO_ADMIN_PIN: 'leonida2026',
   // Dominios aceptados para links de video en los aportes
   VIDEO_DOMINIOS: ['youtube.com', 'youtu.be', 'tiktok.com', 'x.com', 'twitter.com', 'instagram.com', 'facebook.com', 'fb.watch', 'twitch.tv', 'kick.com'],

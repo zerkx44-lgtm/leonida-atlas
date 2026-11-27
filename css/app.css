@@ -193,3 +193,6 @@ body.agregando #map, body.agregando .leaflet-interactive { cursor: crosshair; }
 .confeti { position: fixed; inset: 0; pointer-events: none; z-index: 4000; overflow: hidden; }
 .confeti i { position: absolute; top: -12px; width: 8px; height: 14px; border-radius: 2px; animation: caer linear forwards; }
 @keyframes caer { to { top: 105%; transform: translateX(40px) rotate(720deg); } }
+
+.nav-principal a.nav-apoyo { color: #ffe1a8; border: 1px solid #b8962b; background: color-mix(in srgb, #ffc845 14%, transparent); }
+.nav-principal a.nav-apoyo:hover { background: color-mix(in srgb, #ffc845 26%, transparent); }
