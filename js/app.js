@@ -49,9 +49,11 @@
   }
 
   /* ---------- Filtrado ---------- */
+  const huevoAbierto = () => localStorage.getItem('atlas_huevo_iframes') === '1';
   function coincide(p) {
+    if (p.secreto && !huevoAbierto()) return false;
     if (!estado.cats.has(p.cat)) return false;
-    if (!estado.estados.has(p.estado)) return false;
+    if (!p.secreto && !estado.estados.has(p.estado)) return false;
     if (estado.region && p.region !== estado.region) return false;
     if (estado.soloFavs && !personal.favoritos.includes(p.id)) return false;
     if (estado.ocultarEncontrados && personal.encontrados.includes(p.id)) return false;
@@ -84,7 +86,7 @@
       </div></div>`).join('');
   }
   function pintarConteosCategorias() {
-    const base = todos.filter(p => estado.estados.has(p.estado) && (!estado.region || p.region === estado.region));
+    const base = todos.filter(p => (p.secreto ? huevoAbierto() : estado.estados.has(p.estado)) && (!estado.region || p.region === estado.region));
     for (const id of Object.keys(CATEGORIAS)) {
       const el = document.querySelector(`[data-cnt="${id}"]`);
       if (el) el.textContent = base.filter(p => p.cat === id).length;
@@ -276,7 +278,43 @@
   document.addEventListener('keydown', e => { if (e.key === 'Escape') { if (estado.agregando) terminarAgregar(); else cerrar('ficha'); } });
 
   let tq;
-  $('#q').addEventListener('input', e => { clearTimeout(tq); tq = setTimeout(() => { estado.q = e.target.value.trim(); refrescar(); }, 150); });
+  $('#q').addEventListener('input', e => {
+    clearTimeout(tq);
+    tq = setTimeout(() => {
+      if (Moderacion.normalizar(e.target.value).replace(/\s+/g, '') === 'iframes') { e.target.value = ''; estado.q = ''; return descubrirHuevo(); }
+      estado.q = e.target.value.trim(); refrescar();
+    }, 150);
+  });
+
+  /* 🥚 Easter egg de IFraMes: escribir su alias en el buscador o el código Konami (↑↑↓↓←→←→BA) */
+  const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+  let pasoKonami = 0;
+  document.addEventListener('keydown', e => {
+    if (e.target.closest?.('input, textarea')) return;
+    const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    pasoKonami = k === KONAMI[pasoKonami] ? pasoKonami + 1 : (k === KONAMI[0] ? 1 : 0);
+    if (pasoKonami === KONAMI.length) { pasoKonami = 0; descubrirHuevo(); }
+  });
+  function descubrirHuevo() {
+    const primera = !huevoAbierto();
+    localStorage.setItem('atlas_huevo_iframes', '1');
+    estado.cats.add('misterio');
+    refrescar();
+    abrirFicha('firma-iframes');
+    confeti();
+    toast(primera ? '🥚 ¡Encontraste el easter egg de IFraMes!' : '🥚 Ya conocías este secreto 😉', 4500);
+  }
+  function confeti() {
+    const capa = document.createElement('div');
+    capa.className = 'confeti';
+    const colores = ['#ff4f9a', '#ffc845', '#2de1d8', '#a855f7', '#22c55e'];
+    capa.innerHTML = Array.from({ length: 70 }, (_, i) =>
+      `<i style="left:${Math.random() * 100}%;background:${colores[i % colores.length]};animation-delay:${Math.random() * 0.6}s;animation-duration:${1.8 + Math.random() * 1.4}s;transform:rotate(${Math.random() * 360}deg)"></i>`).join('');
+    document.body.appendChild(capa);
+    setTimeout(() => capa.remove(), 3800);
+  }
+  console.log('%cLeonida Atlas%c — mapa hecho por fans, dibujado por IFraMes.\n¿Buscas secretos? Prueba el código clásico en el mapa: ↑ ↑ ↓ ↓ ← → ← → B A',
+    'font: 900 20px system-ui; color: #ff4f9a', 'font: 13px system-ui; color: #8fb0c2');
   $('#f-region').addEventListener('change', e => {
     estado.region = e.target.value; refrescar();
     const pts = todos.filter(coincide);

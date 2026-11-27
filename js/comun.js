@@ -85,6 +85,7 @@ const ESTADOS = {
   una_fuente: { txt: 'Reportado por 1 guía', icono: '📘' },
   rumor: { txt: 'Rumor — sin verificar', icono: '❓' },
   comunidad: { txt: 'Aporte de la comunidad', icono: '👥' },
+  secreto: { txt: 'Secreto del creador', icono: '🥚' },
 };
 
 /* Captcha (Cloudflare Turnstile). Solo se usa si hay TURNSTILE_SITE_KEY en config.js. */
@@ -113,4 +114,16 @@ const Captcha = (() => {
     return { token: () => valor || window.turnstile.getResponse(id) || null, reset: () => { valor = null; window.turnstile.reset(id); } };
   }
   return { activo, montar };
+})();
+
+/* Aviso breve de almacenamiento local (mapa y wiki). */
+(() => {
+  const b = document.body;
+  if (!b || b.classList.contains('admin') || b.classList.contains('legal') || localStorage.getItem('atlas_aviso_datos_v1')) return;
+  const d = document.createElement('div');
+  d.className = 'aviso-datos'; d.setAttribute('role', 'region'); d.setAttribute('aria-label', 'Aviso de privacidad');
+  d.innerHTML = '<p>🍪 Leonida Atlas no usa cookies de publicidad. Guardamos tus favoritos y tu sesión del chat solo en tu dispositivo. <a href="privacidad.html">Aviso de privacidad</a></p><button class="btn ghost" type="button">Entendido</button>';
+  d.querySelector('button').addEventListener('click', () => { localStorage.setItem('atlas_aviso_datos_v1', '1'); d.remove(); });
+  document.addEventListener('DOMContentLoaded', () => document.body.appendChild(d));
+  if (document.readyState !== 'loading') document.body.appendChild(d);
 })();

@@ -188,3 +188,8 @@ body.agregando #map, body.agregando .leaflet-interactive { cursor: crosshair; }
 .codigo-caja span { font-size: 13px; color: #ffe8a3; }
 .codigo-caja b { font: 800 26px/1 ui-monospace, 'SF Mono', Menlo, monospace; letter-spacing: .12em; color: #fff; flex: 1; }
 .codigo-caja .btn { padding: 5px 12px; font-size: 13px; }
+
+.e-secreto { color: #f0c4ff; }
+.confeti { position: fixed; inset: 0; pointer-events: none; z-index: 4000; overflow: hidden; }
+.confeti i { position: absolute; top: -12px; width: 8px; height: 14px; border-radius: 2px; animation: caer linear forwards; }
+@keyframes caer { to { top: 105%; transform: translateX(40px) rotate(720deg); } }

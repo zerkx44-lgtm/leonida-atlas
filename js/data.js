@@ -526,6 +526,13 @@ const CAJAS = [
 ];
 POIS.push(...CAJAS);
 
+/* 🥚 Easter egg: la firma del cartógrafo. Oculto hasta que alguien lo descubre. */
+POIS.push({ id: 'firma-iframes', nombre: 'La firma del cartógrafo: IFraMes', cat: 'misterio', secreto: true, ancla: 'Sandbars', px: [256, 876],
+  zona: 'Islote sin nombre de las Crude Islands', estado: 'secreto', etiquetas: ['Easter egg'],
+  desc: 'Todo buen mapa esconde la firma de quien lo dibujó. Este islote no aparece en ninguna guía: aquí firmó IFraMes, el creador de Leonida Atlas. Si llegaste hasta aquí, eres de los que revisan cada rincón del mapa.',
+  pasos: ['Escribe el nombre del cartógrafo en el buscador…', '…o usa el código secreto de los videojuegos clásicos en el mapa.', 'Comparte el hallazgo en el chat (¡sin decir cómo!).'],
+  fuentes: [] });
+
 /* Notas útiles en puntos que ya existían */
 for (const [id, codigo] of [['carta-laki', '44017'], ['carta-delord', '62412'], ['coquette-spiderweb', '092319'], ['gauntlet-m7', '7777'], ['firebug-dominator', '6969']]) {
   const p = POIS.find(x => x.id === id); if (p) p.codigo = codigo;

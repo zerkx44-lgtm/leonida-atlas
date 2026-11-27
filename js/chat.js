@@ -32,7 +32,7 @@
     <dialog id="chat-dlg-reglas" class="dialogo">
       <header class="dlg-cab"><h2>Reglas del chat</h2><button type="button" class="cerrar" data-cerrar-dlg aria-label="Cerrar">✕</button></header>
       <ol class="ayuda">${REGLAS.map(r => `<li>${esc(r)}</li>`).join('')}</ol>
-      <p class="tenue">Los mensajes con lenguaje no permitido no se publican. Moderamos a mano el resto.</p>
+      <p class="tenue">Los mensajes con lenguaje no permitido no se publican. Moderamos a mano el resto. Más detalles en los <a href="terminos.html" target="_blank">términos de uso</a> y el <a href="privacidad.html" target="_blank">aviso de privacidad</a>.</p>
     </dialog>`;
   document.body.appendChild(raiz);
   const $ = s => document.querySelector(s);

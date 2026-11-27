@@ -229,6 +229,7 @@ svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {ANCHO} {ALTO}" w
   {''.join(texto(px, py, t, s, 'ciu') for px, py, t, s in CIUDADES)}
   {''.join(texto(px, py, t, 20, 'cond') for px, py, t in CONDADOS)}
 </g>
+<text x="{c(256, 885)[0]}" y="{c(256, 885)[1]}" font-size="1.6" fill="#0a5d74" opacity="0.8" font-style="italic">IFraMes</text>
 <g transform="translate({c(245, 1405)[0]} {c(245, 1405)[1]})" opacity="0.85">
   <circle r="24" fill="none" stroke="#0a5d74" stroke-width="1"/>
   <path d="M0 -26 L5 0 L0 26 L-5 0 Z" fill="#0a5d74"/><path d="M-26 0 L0 5 L26 0 L0 -5 Z" fill="#2a8aa3"/>
