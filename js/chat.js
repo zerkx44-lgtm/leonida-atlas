@@ -108,24 +108,41 @@
     if (alFinal || cerca) lista.scrollTop = lista.scrollHeight;
   }
 
+  /* Carga ligera para ahorrar transferencia de datos:
+   * - chat cerrado: solo pregunta si hay mensajes nuevos (unos cuantos bytes);
+   * - chat abierto: trae solo los mensajes nuevos cada 4 s y recarga todo cada minuto
+   *   (para reflejar mensajes ocultados, borrados o vencidos). */
+  const CAMPOS = 'id,created_at,apodo,texto,oficial,user_id';
+  let completaAl = 0;
   async function cargar(alFinal) {
     try {
       if (Date.now() - apoyadoresAl > 300000) {
         try { apoyadores = new Set((await api('chat_apoyadores?select=user_id')).map(a => a.user_id)); apoyadoresAl = Date.now(); } catch {}
       }
-      const nuevos = await api('chat_mensajes?select=id,created_at,apodo,texto,oficial,user_id&order=id.desc&limit=80');
-      const cambio = nuevos.length !== mensajes.length || (nuevos[0] && mensajes[0]?.id !== nuevos[0].id) || nuevos.some((m, i) => mensajes[i]?.id !== m.id);
-      mensajes = nuevos;
-      $('#chat-estado').textContent = ' · en vivo';
-      if (abierto) {
-        if (cambio) pintar(alFinal);
-        if (mensajes[0]) localStorage.setItem(K_VISTO, mensajes[0].id);
-      }
       const visto = +localStorage.getItem(K_VISTO) || 0;
-      const sinLeer = mensajes.filter(m => m.id > visto).length;
-      const badge = $('#chat-nuevos');
-      badge.hidden = abierto || !sinLeer || !visto;
-      badge.textContent = sinLeer > 9 ? '9+' : sinLeer;
+      if (!abierto) {
+        const nuevosIds = visto ? await api(`chat_mensajes?select=id&id=gt.${visto}&order=id.desc&limit=10`) : [];
+        if (!visto) { const u = await api('chat_mensajes?select=id&order=id.desc&limit=1'); if (u[0]) localStorage.setItem(K_VISTO, u[0].id); }
+        const badge = $('#chat-nuevos');
+        badge.hidden = !nuevosIds.length;
+        badge.textContent = nuevosIds.length > 9 ? '9+' : nuevosIds.length;
+        $('#chat-estado').textContent = ' · en vivo';
+        return;
+      }
+      let cambio = false;
+      if (alFinal || !mensajes.length || Date.now() - completaAl > 60000) {
+        const todos = await api(`chat_mensajes?select=${CAMPOS}&order=id.desc&limit=80`);
+        cambio = todos.length !== mensajes.length || todos.some((m, i) => mensajes[i]?.id !== m.id);
+        mensajes = todos; completaAl = Date.now();
+      } else {
+        const ultimo = mensajes.reduce((a, m) => Math.max(a, m.id), 0);
+        const nuevos = await api(`chat_mensajes?select=${CAMPOS}&id=gt.${ultimo}&order=id.desc&limit=80`);
+        if (nuevos.length) { mensajes = [...nuevos, ...mensajes].slice(0, 80); cambio = true; }
+      }
+      $('#chat-estado').textContent = ' · en vivo';
+      if (cambio) pintar(alFinal);
+      if (mensajes[0]) localStorage.setItem(K_VISTO, Math.max(visto, mensajes[0].id));
+      $('#chat-nuevos').hidden = true;
     } catch { $('#chat-estado').textContent = ' · sin conexión'; }
   }
 

@@ -286,6 +286,10 @@
     }, 150);
   });
 
+  /* iOS Safari ignora maximum-scale: evitamos que el pellizco acerque toda la página. */
+  for (const ev of ['gesturestart', 'gesturechange']) document.addEventListener(ev, e => e.preventDefault(), { passive: false });
+  document.addEventListener('dblclick', e => { if (!e.target.closest('#map')) e.preventDefault(); }, { passive: false });
+
   /* 🥚 Easter egg de IFraMes: escribir su alias en el buscador o el código Konami (↑↑↓↓←→←→BA) */
   const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
   let pasoKonami = 0;
