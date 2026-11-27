@@ -14,6 +14,7 @@
     'Sin spam ni publicidad. Los links solo se permiten si son videos (YouTube, TikTok, X, Instagram, Twitch o Kick).',
     'Si vas a contar algo de la historia, avisa con "SPOILER:" al inicio.',
     'Los mensajes con 3 reportes se ocultan y un moderador los revisa. Quien rompa las reglas puede ser bloqueado.',
+    'Los mensajes se borran solos 24 horas después de enviarse.',
   ];
 
   /* ───── Interfaz ───── */

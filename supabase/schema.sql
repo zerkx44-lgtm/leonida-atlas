@@ -295,3 +295,14 @@ grant select, insert, update, delete on public.chat_bloqueados to authenticated;
 
 -- Limpieza: borra mensajes de más de 30 días (correr a mano o con pg_cron si se activa)
 -- delete from public.chat_mensajes where created_at < now() - interval '30 days';
+
+-- ═════════ LIMPIEZA AUTOMÁTICA (lo que promete el aviso de privacidad) ═════════
+-- Cada hora (minuto 7): borra mensajes del chat con más de 24 h (avisos oficiales: 30 días)
+-- y aportes rechazados con más de 30 días.
+create extension if not exists pg_cron;
+select cron.unschedule(jobid) from cron.job where jobname = 'leonida-limpieza';
+select cron.schedule('leonida-limpieza', '7 * * * *', $$
+  delete from public.chat_mensajes where not oficial and created_at < now() - interval '24 hours';
+  delete from public.chat_mensajes where oficial and created_at < now() - interval '30 days';
+  delete from public.aportes where estado = 'rechazado' and coalesce(revisado_at, created_at) < now() - interval '30 days';
+$$);
