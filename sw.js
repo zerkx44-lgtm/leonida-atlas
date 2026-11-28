@@ -1,5 +1,5 @@
 /* Service worker: la app abre sin conexión (mapa y datos base). */
-const VERSION = 'atlas-v11';
+const VERSION = 'atlas-v12';
 const BASE = ['./', 'index.html', 'admin.html', 'css/app.css', 'css/admin.css', 'js/config.js', 'js/data.js', 'js/moderation.js',
   'js/store.js', 'js/comun.js', 'js/app.js', 'js/admin.js', 'wiki.html', 'js/wiki.js', 'js/wiki-data.js', 'css/wiki.css', 'css/chat.css', 'js/chat.js', 'css/legal.css', 'privacidad.html', 'terminos.html', 'galeria.html', 'js/galeria.js', 'css/galeria.css', 'assets/leonida.svg', 'assets/icon.svg', 'manifest.webmanifest',
   'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'];

@@ -22,5 +22,5 @@ window.ATLAS_CONFIG = {
   ESPERA_ENTRE_ENVIOS_SEG: 60,
   // Galería: en leonidaatlas.wiki las fotos se sirven desde nuestro servidor (/fotos/, con caché)
   // para no gastar la transferencia gratis de Supabase. Vacío = directo de Supabase.
-  FOTOS_PROXY: '',
+  FOTOS_PROXY: '/fotos/',
 };
