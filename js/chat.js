@@ -240,4 +240,12 @@
   if (location.hash === '#chat') abrir();
 
   if (ACTIVO) { cargar(); programar(); }
+
+  /* La galería usa la misma cuenta de la comunidad (apodo, sesión anónima y reglas aceptadas). */
+  window.Comunidad = {
+    activo: ACTIVO, sesion, token, crearCuenta,
+    apodo: () => localStorage.getItem(K_APODO),
+    dentro: () => !!(sesion() && localStorage.getItem(K_APODO) && localStorage.getItem(K_REGLAS)),
+    entrar(apodo) { localStorage.setItem(K_APODO, apodo); localStorage.setItem(K_REGLAS, '1'); if (abierto) pintarPie(); },
+  };
 })();

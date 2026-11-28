@@ -108,5 +108,12 @@ const Store = (() => {
   /* Llamada directa a la API con la sesión del moderador (chat). */
   const api = (path, opts = {}) => sb(path, opts, sesion()?.token);
 
-  return { MODO, listarAprobados, enviar, login, logout, haySesion, listar, actualizar, eliminar, sesion, api };
+  /* Borra archivos del almacenamiento de la galería (solo moderadores o el dueño). */
+  async function borrarArchivos(rutas) {
+    const r = await fetch(`${C.SUPABASE_URL}/storage/v1/object/galeria`, {
+      method: 'DELETE', headers: { ...headers(sesion()?.token) }, body: JSON.stringify({ prefixes: rutas }) });
+    if (!r.ok) { let m = 'No se pudo borrar la imagen'; try { const j = await r.json(); m = j.message || m; } catch {} throw new Error(m); }
+  }
+
+  return { borrarArchivos, MODO, listarAprobados, enviar, login, logout, haySesion, listar, actualizar, eliminar, sesion, api };
 })();

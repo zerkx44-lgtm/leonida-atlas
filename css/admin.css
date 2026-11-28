@@ -37,3 +37,8 @@ mark { background: #ff4f9a; color: #fff; border-radius: 3px; padding: 0 2px; }
 @media (max-width: 640px) { .chat-adm { grid-template-columns: 1fr; } }
 
 .login .chat-captcha:not(:empty) { margin: 6px 0 10px; min-height: 65px; }
+
+.gal-adm { grid-template-columns: 240px 1fr; }
+.gal-adm img { width: 240px; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 10px; display: block; background: #000; }
+.sub-cola { margin: 18px 0 0; font-size: 16px; color: var(--tenue); }
+@media (max-width: 640px) { .gal-adm { grid-template-columns: 1fr; } .gal-adm img { width: 100%; } }

@@ -2,6 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://leonidaatlas.wiki/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
   <url><loc>https://leonidaatlas.wiki/wiki.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://leonidaatlas.wiki/galeria.html</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
   <url><loc>https://leonidaatlas.wiki/privacidad.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://leonidaatlas.wiki/terminos.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
 </urlset>

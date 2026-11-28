@@ -20,4 +20,7 @@ window.ATLAS_CONFIG = {
   // Dominios aceptados para links de video en los aportes
   VIDEO_DOMINIOS: ['youtube.com', 'youtu.be', 'tiktok.com', 'x.com', 'twitter.com', 'instagram.com', 'facebook.com', 'fb.watch', 'twitch.tv', 'kick.com'],
   ESPERA_ENTRE_ENVIOS_SEG: 60,
+  // Galería: en leonidaatlas.wiki las fotos se sirven desde nuestro servidor (/fotos/, con caché)
+  // para no gastar la transferencia gratis de Supabase. Vacío = directo de Supabase.
+  FOTOS_PROXY: '',
 };

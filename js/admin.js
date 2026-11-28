@@ -35,6 +35,7 @@
     try { aportes = await Store.listar(); }
     catch (ex) { toast('Error al cargar: ' + ex.message); if (/jwt|token|auth/i.test(ex.message)) { Store.logout(); mostrar(); } return; }
     for (const e of ['pendiente', 'aprobado', 'rechazado']) $('#n-' + e).textContent = aportes.filter(a => a.estado === e).length;
+    if (!demo) Store.api('galeria_fotos?select=id&estado=eq.pendiente').then(r => { $('#n-galeria').textContent = r.length || '·'; }).catch(() => {});
     pintar();
   }
 
@@ -132,7 +133,57 @@
     } catch (ex) { toast('Error: ' + ex.message); }
   });
 
+  /* ───── Galería ───── */
+  let galFotos = [];
+  const urlFoto = ruta => `${window.ATLAS_CONFIG.SUPABASE_URL}/storage/v1/object/public/galeria/${ruta.split('/').map(encodeURIComponent).join('/')}`;
+  async function cargarGaleria() {
+    if (demo) { $('#cola').innerHTML = '<div class="vacio-cola">La galería solo funciona con Supabase conectado.</div>'; return; }
+    try {
+      galFotos = await Store.api('galeria_fotos?select=id,created_at,user_id,apodo,titulo,zona,ruta,ruta_mini,ancho,alto,estado,fuegos,reportes&order=created_at.desc&limit=200');
+    } catch (ex) { toast('Error al cargar la galería: ' + ex.message); return; }
+    const pend = galFotos.filter(f => f.estado === 'pendiente');
+    $('#n-galeria').textContent = pend.length || '·';
+    const pub = galFotos.filter(f => f.estado === 'aprobado');
+    const tarjeta = f => `
+      <article class="aporte gal-adm ${f.reportes ? 'alerta' : ''}" data-fid="${esc(f.id)}">
+        <a href="${esc(urlFoto(f.ruta))}" target="_blank" rel="noopener" title="Ver en grande"><img src="${esc(urlFoto(f.ruta_mini))}" alt="" loading="lazy"></a>
+        <div><h3>${esc(f.titulo)}</h3>
+          <div class="meta"><span>👤 ${esc(f.apodo)} <small>${esc(f.user_id.slice(0, 8))}…</small></span><span>🕒 ${esc(fechaCorta(f.created_at))}</span>
+            ${f.zona ? `<span>📍 ${esc(f.zona)}</span>` : ''}<span>${f.ancho}×${f.alto}</span>${f.estado === 'aprobado' ? `<span>❤️‍🔥 ${f.fuegos}</span>` : ''}</div>
+          ${f.reportes ? `<div class="banderas"><span class="bandera roja">⚑ ${f.reportes} reporte(s)</span></div>` : ''}
+          <div class="botones">
+            ${f.estado === 'pendiente' ? '<button class="btn aprobar" data-g="aprobar">✓ Aprobar y publicar</button><button class="btn rechazar" data-g="rechazar">✕ Rechazar y borrar</button>'
+              : '<button class="btn ghost" data-g="ocultar">↩ Regresar a revisión</button><button class="btn rechazar" data-g="rechazar">🗑 Borrar</button>'}
+            <button class="btn ghost" data-g="bloquear">⛔ Bloquear 24 h</button>
+          </div></div>
+      </article>`;
+    $('#cola').innerHTML = `
+      <div class="aporte"><div><h3>📸 Por revisar (${pend.length})</h3></div><div><p class="tenue">Revisa que sea una captura del juego, sin desnudos, gore real, datos personales, marcas de agua ajenas, arte oficial ni filtraciones. Al rechazar se borra la imagen.</p></div></div>
+      ${pend.map(tarjeta).join('') || '<div class="vacio-cola">🎉 No hay fotos por revisar.</div>'}
+      <h3 class="sub-cola">Publicadas recientes (${pub.length})</h3>
+      ${pub.map(tarjeta).join('') || '<div class="vacio-cola">Todavía no hay fotos publicadas.</div>'}`;
+  }
+  $('#cola').addEventListener('click', async e => {
+    const b = e.target.closest('[data-g]'); if (!b) return;
+    const id = b.closest('[data-fid]').dataset.fid, f = galFotos.find(x => x.id === id);
+    try {
+      const c = b.dataset.g;
+      if (c === 'aprobar' || c === 'ocultar') await Store.api(`galeria_fotos?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ estado: c === 'aprobar' ? 'aprobado' : 'pendiente' }), headers: { Prefer: 'return=minimal' } });
+      if (c === 'rechazar') {
+        if (!confirm('¿Borrar esta foto para siempre? No se puede deshacer.')) return;
+        await Store.borrarArchivos([f.ruta, f.ruta_mini]);
+        await Store.api(`galeria_fotos?id=eq.${id}`, { method: 'DELETE' });
+      }
+      if (c === 'bloquear') {
+        const motivo = prompt('Motivo del bloqueo (no podrá subir fotos ni escribir en el chat 24 h):', 'Foto que rompe las reglas'); if (motivo === null) return;
+        await Store.api('chat_bloqueados', { method: 'POST', body: JSON.stringify({ user_id: f.user_id, motivo, hasta: new Date(Date.now() + 864e5).toISOString() }), headers: { Prefer: 'resolution=merge-duplicates,return=minimal' } });
+      }
+      toast(c === 'aprobar' ? 'Publicada en la galería ✓' : 'Listo'); await cargarGaleria();
+    } catch (ex) { toast('Error: ' + ex.message); }
+  });
+
   function pintar() {
+    if (tab === 'galeria') return cargarGaleria();
     if (tab === 'chat') return cargarChat();
     const lista = aportes.filter(a => a.estado === tab);
     if (tab === 'pendiente') lista.sort((a, b) => analizar(b).groserias.length - analizar(a).groserias.length || new Date(a.created_at) - new Date(b.created_at));
@@ -221,7 +272,7 @@
     document.querySelectorAll('[data-tab]').forEach(x => x.classList.toggle('on', x === t));
     pintar();
   }));
-  $('#btn-recargar').addEventListener('click', () => (tab === 'chat' ? cargarChat() : cargar()));
+  $('#btn-recargar').addEventListener('click', () => (tab === 'chat' ? cargarChat() : tab === 'galeria' ? cargarGaleria() : cargar()));
 
   mostrar();
 })();

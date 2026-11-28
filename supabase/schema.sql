@@ -1,5 +1,5 @@
 -- Leonida Atlas — base de datos para aportes moderados (Supabase / Postgres).
--- Pégalo completo en Supabase → SQL Editor → Run.
+-- Pégalo completo en Supabase → SQL Editor → Run. Después corre supabase/galeria.sql (galería de fotos).
 -- Reglas clave:
 --   * Cualquiera puede ENVIAR un aporte, pero siempre entra como 'pendiente'.
 --   * El público solo puede LEER aportes 'aprobado'.

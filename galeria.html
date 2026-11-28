@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Galería — Leonida Atlas: capturas de GTA VI de la comunidad</title>
+  <meta name="description" content="Las mejores capturas de GTA VI tomadas por la comunidad: atardeceres en Vice City, autos, persecuciones y lugares escondidos de Leonida. Sube la tuya y dale fuego a tus favoritas.">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Leonida Atlas">
+  <meta property="og:locale" content="es_MX">
+  <meta property="og:title" content="Galería de la comunidad — capturas de GTA VI · Leonida Atlas">
+  <meta property="og:description" content="Sube tus mejores capturas de Leonida y dale ❤️‍🔥 fuego a las de los demás.">
+  <meta property="og:url" content="https://leonidaatlas.wiki/galeria.html">
+  <meta property="og:image" content="https://leonidaatlas.wiki/assets/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Mapa ilustrado de Leonida con el logo de Leonida Atlas">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Galería de la comunidad — capturas de GTA VI · Leonida Atlas">
+  <meta name="twitter:description" content="Sube tus mejores capturas de Leonida y dale ❤️‍🔥 fuego a las de los demás.">
+  <meta name="twitter:image" content="https://leonidaatlas.wiki/assets/og.jpg">
+  <link rel="canonical" href="https://leonidaatlas.wiki/galeria.html">
+  <meta name="theme-color" content="#0b1d2a">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <link rel="stylesheet" href="css/app.css?v=12">
+  <link rel="stylesheet" href="css/chat.css?v=11">
+  <link rel="stylesheet" href="css/legal.css?v=11">
+  <link rel="stylesheet" href="css/galeria.css?v=2">
+</head>
+<body class="galeria">
+  <header class="topbar">
+    <a class="marca" href="./" aria-label="Leonida Atlas, mapa">
+      <img src="assets/icon.svg" alt="" width="30" height="30"><span><b>Leonida</b> Atlas</span>
+    </a>
+    <nav class="nav-principal" aria-label="Secciones">
+      <a href="./">🗺️ <span>Mapa</span></a>
+      <a href="wiki.html">📚 <span>Wiki</span></a>
+      <a href="galeria.html" aria-current="page">📸 <span>Galería</span></a>
+      <a class="nav-apoyo" href="https://ko-fi.com/iframeees" target="_blank" rel="noopener" title="Apoya el mapa en Ko-fi">☕ <span>Apoya</span></a>
+    </nav>
+  </header>
+
+  <main class="gal-main">
+    <section class="gal-hero">
+      <div>
+        <h1>📸 Galería de la comunidad</h1>
+        <p class="tenue">Tus mejores capturas de Leonida. Dale <b class="txt-fuego">❤️‍🔥 fuego</b> a tus favoritas: las que más fuego tienen suben al top.</p>
+      </div>
+      <button id="btn-subir" class="btn primario btn-subir">＋ Subir mi captura</button>
+    </section>
+
+    <nav class="gal-tabs" role="tablist">
+      <button role="tab" data-orden="fuego" class="on">❤️‍🔥 Más fuego</button>
+      <button role="tab" data-orden="recientes">🆕 Recientes</button>
+      <button role="tab" data-orden="mias" id="tab-mias" hidden>👤 Mis fotos</button>
+    </nav>
+
+    <div id="grid" class="gal-grid" aria-live="polite"></div>
+    <p class="gal-mas"><button id="btn-mas" class="btn ghost" hidden>Ver más fotos</button></p>
+
+    <p class="aviso">
+      Galería de fans <b>no oficial</b>, sin relación con Rockstar Games ni Take-Two. Cada foto la revisa un moderador antes de publicarse.
+      Solo capturas tomadas por ti dentro del juego; nada de filtraciones, arte oficial, contenido para adultos ni datos personales.
+      <br><a href="terminos.html">Términos</a> · <a href="privacidad.html">Privacidad</a>
+    </p>
+  </main>
+
+  <!-- Ver una foto -->
+  <dialog id="dlg-foto" class="dialogo dlg-foto">
+    <div id="foto-contenido"></div>
+  </dialog>
+
+  <!-- Subir una foto -->
+  <dialog id="dlg-subir" class="dialogo">
+    <form id="form-subir">
+      <header class="dlg-cab"><h2>Subir mi captura</h2><button type="button" class="cerrar" data-cerrar-dlg aria-label="Cerrar">✕</button></header>
+      <label class="soltar" id="soltar">
+        <input type="file" name="archivo" accept="image/*" required>
+        <span id="soltar-txt">📷 Toca para elegir una captura<br><small class="tenue">JPG, PNG o WEBP · la optimizamos antes de subirla</small></span>
+        <img id="vista" alt="" hidden>
+      </label>
+      <label class="campo">Título<input name="titulo" maxlength="80" minlength="3" required placeholder="Ej. Atardecer desde el muelle de Vice Beach"></label>
+      <label class="campo">Lugar (opcional)<input name="zona" maxlength="60" list="zonas" placeholder="Ej. Vice City, Leonida Keys…"></label>
+      <datalist id="zonas"></datalist>
+      <label class="check"><input type="checkbox" name="mia" required> <span>Es una captura que tomé yo dentro del juego, sin datos personales ni contenido para adultos.</span></label>
+      <p class="tenue nota-subir">Un moderador la revisa antes de publicarla (normalmente el mismo día). Le quitamos los datos ocultos de la imagen (ubicación, cámara).</p>
+      <p class="error" id="subir-error" hidden></p>
+      <footer class="dlg-pie"><button type="button" class="btn ghost" data-cerrar-dlg>Cancelar</button><button class="btn primario" id="btn-enviar-foto">Enviar a revisión</button></footer>
+    </form>
+  </dialog>
+
+  <!-- Entrar a la comunidad (la misma cuenta del chat) -->
+  <dialog id="dlg-entrar" class="dialogo">
+    <form id="form-entrar">
+      <header class="dlg-cab"><h2>Únete a la comunidad</h2><button type="button" class="cerrar" data-cerrar-dlg aria-label="Cerrar">✕</button></header>
+      <p class="tenue" id="entrar-motivo"></p>
+      <label class="campo">Tu apodo<input name="apodo" maxlength="24" minlength="2" required placeholder="Ej. ViceRider"></label>
+      <label class="check"><input type="checkbox" name="reglas" required> <span>Acepto las reglas: respeto, nada de groserías, spam ni datos personales (<a href="terminos.html" target="_blank">términos</a>).</span></label>
+      <div id="entrar-captcha" class="chat-captcha"></div>
+      <p class="tenue nota-subir">No pedimos correo ni contraseña. Es la misma cuenta del chat.</p>
+      <p class="error" id="entrar-error" hidden></p>
+      <footer class="dlg-pie"><button type="button" class="btn ghost" data-cerrar-dlg>Cancelar</button><button class="btn primario">Entrar</button></footer>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+
+  <script src="js/config.js?v=12"></script>
+  <script src="js/moderation.js?v=11"></script>
+  <script src="js/comun.js?v=11"></script>
+  <script src="js/chat.js?v=13"></script>
+  <script src="js/galeria.js?v=2"></script>
+  <!-- Cloudflare Web Analytics (sin cookies) --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "78bb8f6af27d464cb565b51027987e78"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

@@ -17,19 +17,20 @@
     <nav class="nav-principal" aria-label="Secciones">
       <a href="./">🗺️ <span>Mapa</span></a>
       <a href="wiki.html">📚 <span>Wiki</span></a>
+      <a href="galeria.html">📸 <span>Galería</span></a>
     </nav>
   </header>
 
   <main class="legal-main">
     <h1>Aviso de privacidad</h1>
-    <p class="fecha">Última actualización: 26 de noviembre de 2026</p>
+    <p class="fecha">Última actualización: 27 de noviembre de 2026</p>
 
     <div class="resumen">
       <b>En corto:</b>
       <ul>
         <li>Para usar el mapa y la wiki <b>no necesitas cuenta</b> ni dar tu nombre, correo o teléfono.</li>
         <li>Tus favoritos y puntos encontrados se guardan <b>solo en tu dispositivo</b>.</li>
-        <li>Si mandas un aporte o escribes en el chat, guardamos lo que escribes y el apodo que elijas para mostrarlo y moderarlo.</li>
+        <li>Si mandas un aporte, escribes en el chat o subes una foto a la galería, guardamos lo que envías y el apodo que elijas para mostrarlo y moderarlo.</li>
         <li><b>No vendemos tus datos</b> ni los usamos para publicidad dirigida.</li>
       </ul>
       <div class="indice">
@@ -50,6 +51,7 @@
         <tr><td>Navegas el mapa o la wiki</td><td>Favoritos, puntos marcados como encontrados, preferencias. <b>No salen de tu dispositivo.</b></td><td>Almacenamiento local de tu navegador</td></tr>
         <tr><td>Mandas un aporte o corrección</td><td>Título, mensaje, categoría, ubicación en el mapa, link de video (opcional) y apodo (opcional)</td><td>Base de datos (Supabase)</td></tr>
         <tr><td>Entras al chat</td><td>Apodo, mensajes, un identificador anónimo de sesión (sin correo ni contraseña), reportes que hagas y, si aplica, bloqueos</td><td>Base de datos (Supabase) y tu navegador</td></tr>
+        <tr><td>Subes una foto a la galería</td><td>La imagen (la reducimos y le <b>quitamos los metadatos</b>, como ubicación GPS o modelo de cámara, antes de subirla), su título, el lugar (opcional), tu apodo y tu identificador anónimo. También los fuegos ❤️‍🔥 que das y los reportes que haces</td><td>Base de datos y almacenamiento de archivos (Supabase)</td></tr>
         <tr><td>Verificación anti-bots</td><td>Señales técnicas del navegador y del dispositivo que Cloudflare analiza para distinguir personas de bots</td><td>Cloudflare Turnstile</td></tr>
         <tr><td>Cualquier visita</td><td>Dirección IP, fecha y hora, página solicitada y tipo de navegador (registros técnicos del servidor)</td><td>Nuestro servidor y los proveedores de infraestructura</td></tr>
         <tr><td>Moderadores</td><td>Correo y contraseña de las cuentas de moderación</td><td>Supabase (contraseña cifrada)</td></tr>
@@ -62,6 +64,7 @@
     <ul>
       <li>Mostrar el mapa, la wiki y recordar tus favoritos y progreso.</li>
       <li>Recibir, revisar y publicar aportes de la comunidad.</li>
+      <li>Mostrar la galería de la comunidad, contar los fuegos ❤️‍🔥 y revisar cada foto antes de publicarla.</li>
       <li>Hacer funcionar el chat: mostrar mensajes, aplicar sus reglas (filtro de groserías, límite de velocidad, reportes y bloqueos) y evitar abusos.</li>
       <li>Proteger el sitio contra bots, spam y ataques, y mantener su seguridad y funcionamiento.</li>
     </ul>
@@ -75,7 +78,7 @@
     <h2 id="terceros">4. Con quién se comparten</h2>
     <p>No vendemos ni rentamos tus datos. Solo los manejan los proveedores que hacen funcionar el sitio, cada uno con sus propias políticas:</p>
     <ul>
-      <li><b>Supabase</b>: base de datos y cuentas anónimas del chat (servidores en Canadá).</li>
+      <li><b>Supabase</b>: base de datos, fotos de la galería y cuentas anónimas de la comunidad (servidores en Canadá).</li>
       <li><b>Cloudflare</b>: verificación anti-bots Turnstile y <b>Web Analytics</b>, un contador de visitas <b>sin cookies</b> que solo nos muestra cifras agregadas (visitas, páginas vistas, país y tipo de dispositivo); no identifica a nadie ni sigue tu actividad en otros sitios.</li>
       <li><b>Hostinger</b>: servidor donde se aloja el sitio y registro del dominio.</li>
       <li><b>GitHub</b>: alojamiento del código y copia de respaldo del sitio.</li>
@@ -99,6 +102,7 @@
     <h2 id="conservacion">6. Cuánto tiempo los guardamos</h2>
     <ul>
       <li><b>Mensajes del chat:</b> se borran automáticamente <b>24 horas</b> después de enviarse. Los avisos oficiales de moderación duran hasta 30 días.</li>
+      <li><b>Fotos de la galería:</b> mientras estén publicadas. Puedes borrar las tuyas cuando quieras desde "Mis fotos". Las que rechaza un moderador se borran en ese momento.</li>
       <li><b>Aportes publicados:</b> mientras estén en el mapa. Los rechazados se borran automáticamente a los 30 días.</li>
       <li><b>Registros técnicos del servidor:</b> el tiempo mínimo necesario para seguridad y diagnóstico.</li>
       <li><b>Datos en tu navegador:</b> hasta que tú los borres.</li>
