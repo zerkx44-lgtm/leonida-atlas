@@ -179,23 +179,23 @@ alter table public.galeria_reportes enable row level security;
 
 drop policy if exists "galeria leer" on public.galeria_fotos;
 create policy "galeria leer" on public.galeria_fotos for select
-  using (estado = 'aprobado' or user_id = auth.uid() or privado.es_admin());
+  using (estado = 'aprobado' or user_id = (select auth.uid()) or privado.es_admin());
 drop policy if exists "galeria subir" on public.galeria_fotos;
-create policy "galeria subir" on public.galeria_fotos for insert to authenticated with check (user_id = auth.uid());
+create policy "galeria subir" on public.galeria_fotos for insert to authenticated with check (user_id = (select auth.uid()));
 drop policy if exists "galeria moderar" on public.galeria_fotos;
 create policy "galeria moderar" on public.galeria_fotos for update to authenticated using (privado.es_admin()) with check (privado.es_admin());
 drop policy if exists "galeria borrar" on public.galeria_fotos;
-create policy "galeria borrar" on public.galeria_fotos for delete to authenticated using (user_id = auth.uid() or privado.es_admin());
+create policy "galeria borrar" on public.galeria_fotos for delete to authenticated using (user_id = (select auth.uid()) or privado.es_admin());
 
 drop policy if exists "ver mis fuegos" on public.galeria_fuegos;
-create policy "ver mis fuegos" on public.galeria_fuegos for select to authenticated using (user_id = auth.uid());
+create policy "ver mis fuegos" on public.galeria_fuegos for select to authenticated using (user_id = (select auth.uid()));
 drop policy if exists "dar fuego" on public.galeria_fuegos;
-create policy "dar fuego" on public.galeria_fuegos for insert to authenticated with check (user_id = auth.uid());
+create policy "dar fuego" on public.galeria_fuegos for insert to authenticated with check (user_id = (select auth.uid()));
 drop policy if exists "quitar fuego" on public.galeria_fuegos;
-create policy "quitar fuego" on public.galeria_fuegos for delete to authenticated using (user_id = auth.uid());
+create policy "quitar fuego" on public.galeria_fuegos for delete to authenticated using (user_id = (select auth.uid()));
 
 drop policy if exists "reportar foto" on public.galeria_reportes;
-create policy "reportar foto" on public.galeria_reportes for insert to authenticated with check (user_id = auth.uid());
+create policy "reportar foto" on public.galeria_reportes for insert to authenticated with check (user_id = (select auth.uid()));
 drop policy if exists "admin ve reportes de fotos" on public.galeria_reportes;
 create policy "admin ve reportes de fotos" on public.galeria_reportes for select to authenticated using (privado.es_admin());
 
@@ -210,12 +210,12 @@ grant select, insert (foto_id) on public.galeria_reportes to authenticated;
 -- Archivos: cada quien sube y borra solo en su carpeta; moderadores borran cualquiera.
 drop policy if exists "galeria subir archivo" on storage.objects;
 create policy "galeria subir archivo" on storage.objects for insert to authenticated
-  with check (bucket_id = 'galeria' and (storage.foldername(name))[1] = auth.uid()::text
+  with check (bucket_id = 'galeria' and (storage.foldername(name))[1] = (select auth.uid())::text
               and name ~ '^[0-9a-f-]{36}/[0-9a-f-]{36}(_m)?\.(webp|jpg)$' and not privado.bloqueado());
 drop policy if exists "galeria borrar archivo" on storage.objects;
 create policy "galeria borrar archivo" on storage.objects for delete to authenticated
-  using (bucket_id = 'galeria' and ((storage.foldername(name))[1] = auth.uid()::text or privado.es_admin()));
+  using (bucket_id = 'galeria' and ((storage.foldername(name))[1] = (select auth.uid())::text or privado.es_admin()));
 -- El borrado por la API de almacenamiento necesita poder "ver" el archivo.
 drop policy if exists "galeria ver archivo propio" on storage.objects;
 create policy "galeria ver archivo propio" on storage.objects for select to authenticated
-  using (bucket_id = 'galeria' and ((storage.foldername(name))[1] = auth.uid()::text or privado.es_admin()));
+  using (bucket_id = 'galeria' and ((storage.foldername(name))[1] = (select auth.uid())::text or privado.es_admin()));
